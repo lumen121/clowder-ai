@@ -15,6 +15,10 @@
 - [09-risk-controls.md](09-risk-controls.md)：人工确认点、禁止默认动作、升级条件和风险控制规则。
 - [13-decisions-and-assumptions.md](13-decisions-and-assumptions.md)：已确认决策、默认假设和未决事项。
 
+## 变更提案
+
+- [14-page-user-participation-proposal.md](14-page-user-participation-proposal.md)：页面级用户参与入口、页面范围、验收标准和对现有任务的影响，供架构 Review。
+
 ## 使用规则
 
 - 本目录内容优先级高于架构建议和复盘建议。

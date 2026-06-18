@@ -18,6 +18,11 @@
 - [execution/](execution/00-index.md)：当前执行计划、阶段门禁和执行节奏，不放构建产物或发布包。
 - [retrospectives/](retrospectives/00-index.md)：复盘、Review 和历史改进记录。
 
+## 当前变更提案
+
+- [product/14-page-user-participation-proposal.md](product/14-page-user-participation-proposal.md)
+- [architecture/15-page-user-participation-architecture-change.md](architecture/15-page-user-participation-architecture-change.md)
+
 ## 文档权重
 
 1. `product/`、`collaboration/`、`agents/` 是当前产品与协作基线，Agent 执行时必须遵守。
@@ -39,6 +44,7 @@
 - [architecture/11-architecture-brief.md](architecture/11-architecture-brief.md)
 - [architecture/14-system-architecture-design.md](architecture/14-system-architecture-design.md)
 - [execution/15-implementation-plan.md](execution/15-implementation-plan.md)
+- [product/14-page-user-participation-proposal.md](product/14-page-user-participation-proposal.md)
 
 选读：
 
@@ -64,6 +70,8 @@ Agent 不得自行选择身份并开始执行。零阶段人工调度或未来 H
 - Review 方。
 - 验收标准。
 - 禁止事项。
+- 开发类任务的维护性注释要求。
+- Git 写入动作的 Agent 身份要求。
 
 被分配的 Agent 执行任务前必读：
 

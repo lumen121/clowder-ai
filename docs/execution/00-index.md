@@ -12,6 +12,10 @@
 - [15-implementation-plan.md](15-implementation-plan.md)：基于系统架构设计的一周实现任务拆解与开发计划。
 - [19-t1-baseline-confirmation-result.md](19-t1-baseline-confirmation-result.md)：T1 实现基线确认结果，供非作者 Agent Review 使用。
 - [20-t1-review-by-claude.md](20-t1-review-by-claude.md)：T1 非作者 Review 报告（Claude），结论为需要修改。
+- [21-t2-work-item-entry-result.md](21-t2-work-item-entry-result.md)：T2 工作项录入与类型选择/识别最小入口结果，供非作者 Agent Review 使用。
+- [22-t3-persistence-result.md](22-t3-persistence-result.md)：T3 逻辑模型与本地持久化结果，供非作者 Agent Review 使用。
+- [23-t2-review-by-claude.md](23-t2-review-by-claude.md)：T2 非作者 Review 报告（Claude），结论为需要修改。
+- [24-t3-review-by-codex.md](24-t3-review-by-codex.md)：T3 非作者 Review 报告（Codex），结论为需要修改。
 
 ## 使用规则
 

@@ -35,6 +35,9 @@
 | P0-11 | 质量门禁 | 变更必须通过合适的检查或验证；失败时必须进入可见、可恢复状态。 | [08](08-acceptance-criteria.md), [09](09-risk-controls.md) | approved |
 | P0-12 | Feature 分支交付 | 门禁通过后，系统可以准备提交并推送 feature 分支到远程仓库。 | [08](08-acceptance-criteria.md) | approved |
 | P0-13 | 人工升级 | 需求歧义、Agent 分歧、高风险动作、失败门禁和不安全操作必须升级给用户。 | [09](09-risk-controls.md) | approved |
+| P0-14 | 页面级用户参与入口 | 系统提供页面入口，支持工作项录入、状态可见、阻塞确认、Review、门禁和复盘查看；CLI 只能作为零阶段或内部入口。 | [14](14-page-user-participation-proposal.md) | approved |
+| P0-15 | 页面级工作项详情与状态可见 | 系统提供工作项详情与状态视图，展示目标、范围、负责人、依赖、Review 方、阻塞项和最近一次关键结论。 | [14](14-page-user-participation-proposal.md) | approved |
+| P0-16 | 页面级 Review / 门禁 / 复盘查看 | 系统提供 Review、门禁和复盘视图，使用户能够判断继续推进、修改、确认风险或结束工作项。 | [14](14-page-user-participation-proposal.md) | approved |
 
 ## P1 需求
 
@@ -55,4 +58,3 @@
 | D-03 | 自动合并到 main | 首版风险过高。 |
 | D-04 | 功能和 Bug 之外的工作项类型 | 首版需要聚焦。 |
 | D-05 | 面向最终用户的工作流自定义 | 固定首版流程更容易治理和验证。 |
-
