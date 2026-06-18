@@ -10,6 +10,8 @@
 ## 当前文档
 
 - [15-implementation-plan.md](15-implementation-plan.md)：基于系统架构设计的一周实现任务拆解与开发计划。
+- [19-t1-baseline-confirmation-result.md](19-t1-baseline-confirmation-result.md)：T1 实现基线确认结果，供非作者 Agent Review 使用。
+- [20-t1-review-by-claude.md](20-t1-review-by-claude.md)：T1 非作者 Review 报告（Claude），结论为需要修改。
 
 ## 使用规则
 
