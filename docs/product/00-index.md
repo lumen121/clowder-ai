@@ -14,10 +14,8 @@
 - [08-acceptance-criteria.md](08-acceptance-criteria.md)：功能需求、Bug 修复、A2A、Review、门禁、交付和 Dogfooding 验收标准。
 - [09-risk-controls.md](09-risk-controls.md)：人工确认点、禁止默认动作、升级条件和风险控制规则。
 - [13-decisions-and-assumptions.md](13-decisions-and-assumptions.md)：已确认决策、默认假设和未决事项。
-
-## 变更提案
-
-- [14-page-user-participation-proposal.md](14-page-user-participation-proposal.md)：页面级用户参与入口、页面范围、验收标准和对现有任务的影响，供架构 Review。
+- [14-page-user-participation-proposal.md](14-page-user-participation-proposal.md)：页面级用户参与入口、页面范围、验收标准和对现有任务的影响。
+- [15-page-change-implementation-clarifications.md](15-page-change-implementation-clarifications.md)：P0-14/15/16 对 T2、T3、T13、T16 的产品侧执行澄清。
 
 ## 使用规则
 

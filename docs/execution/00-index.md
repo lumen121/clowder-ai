@@ -15,7 +15,15 @@
 - [21-t2-work-item-entry-result.md](21-t2-work-item-entry-result.md)：T2 工作项录入与类型选择/识别最小入口结果，供非作者 Agent Review 使用。
 - [22-t3-persistence-result.md](22-t3-persistence-result.md)：T3 逻辑模型与本地持久化结果，供非作者 Agent Review 使用。
 - [23-t2-review-by-claude.md](23-t2-review-by-claude.md)：T2 非作者 Review 报告（Claude），结论为需要修改。
-- [24-t3-review-by-codex.md](24-t3-review-by-codex.md)：T3 非作者 Review 报告（Codex），结论为需要修改。
+- [24-t3-review-by-codex.md](24-t3-review-by-codex.md)：T3 非作者 Review 报告（Codex），结论为通过。
+- [25-change-impact-assessment-p0-14-16.md](25-change-impact-assessment-p0-14-16.md)：P0-14/15/16 变更影响评估（Claude），结论为 T3 无修改、补齐在 T13。
+- [26-t2-change-impact-assessment-p0-14-16-by-codex.md](26-t2-change-impact-assessment-p0-14-16-by-codex.md)：T2 对 P0-14/15/16 的变更影响评估（Codex），结论为当前 T2 不满足新页面主入口基线，需补齐最小页面录入入口。
+- [27-t3-page-query-verification.md](27-t3-page-query-verification.md)：T3 页面查询视角验证（Claude），15 项通过，证明持久化模块零修改支撑 5 个页面视图。
+
+## 产品澄清引用
+
+- [../product/15-page-change-implementation-clarifications.md](../product/15-page-change-implementation-clarifications.md)：产品负责人对 T2/T3 变更影响评估待确认项的裁决。后续 T2、T3、T13、T16 执行必须遵守。
+- [../architecture/16-page-change-architecture-clarifications.md](../architecture/16-page-change-architecture-clarifications.md)：系统架构师对 T2/T3 持久化出口、页面查询视角、T13 边界和 MiniMax 参与节奏的执行澄清。后续页面相关任务启动上下文应引用。
 
 ## 使用规则
 

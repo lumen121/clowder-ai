@@ -11,6 +11,7 @@
 
 - [11-architecture-brief.md](11-architecture-brief.md)：系统架构师的输入说明和输出要求。
 - [14-system-architecture-design.md](14-system-architecture-design.md)：系统架构设计，覆盖模块划分、状态机、A2A、Harness、worktree、Review、质量门禁、人工升级、Dogfooding 和反馈回路。
+- [16-page-change-architecture-clarifications.md](16-page-change-architecture-clarifications.md)：P0-14/15/16 对 T2、T3、T13、T16 的架构执行澄清。
 
 ## 变更提案
 

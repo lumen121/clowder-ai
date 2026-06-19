@@ -21,7 +21,9 @@
 ## 当前变更提案
 
 - [product/14-page-user-participation-proposal.md](product/14-page-user-participation-proposal.md)
+- [product/15-page-change-implementation-clarifications.md](product/15-page-change-implementation-clarifications.md)
 - [architecture/15-page-user-participation-architecture-change.md](architecture/15-page-user-participation-architecture-change.md)
+- [architecture/16-page-change-architecture-clarifications.md](architecture/16-page-change-architecture-clarifications.md)
 
 ## 文档权重
 
@@ -45,6 +47,8 @@
 - [architecture/14-system-architecture-design.md](architecture/14-system-architecture-design.md)
 - [execution/15-implementation-plan.md](execution/15-implementation-plan.md)
 - [product/14-page-user-participation-proposal.md](product/14-page-user-participation-proposal.md)
+- [product/15-page-change-implementation-clarifications.md](product/15-page-change-implementation-clarifications.md)
+- [architecture/16-page-change-architecture-clarifications.md](architecture/16-page-change-architecture-clarifications.md)
 
 选读：
 
@@ -92,6 +96,7 @@ Agent 不得自行选择身份并开始执行。零阶段人工调度或未来 H
 - 需求统筹、方案设计或任务拆解：补读 [product/02-requirements-backlog.md](product/02-requirements-backlog.md)、[product/13-decisions-and-assumptions.md](product/13-decisions-and-assumptions.md)、[architecture/14-system-architecture-design.md](architecture/14-system-architecture-design.md)。
 - 代码实现或 Bug 修复：补读 [architecture/14-system-architecture-design.md](architecture/14-system-architecture-design.md) 和当前任务上下文。
 - UI、视觉、多模态、语音、视频、图片或交互体验任务：补读 [agents/07-agent-minimax.md](agents/07-agent-minimax.md) 和相关体验任务上下文。
+- 页面级用户参与、T2/T3 页面变更补齐、T13 或 T16：补读 [product/14-page-user-participation-proposal.md](product/14-page-user-participation-proposal.md)、[product/15-page-change-implementation-clarifications.md](product/15-page-change-implementation-clarifications.md) 和 [architecture/16-page-change-architecture-clarifications.md](architecture/16-page-change-architecture-clarifications.md)。
 - 零阶段人工协作：补读 [collaboration/12-phase-zero-manual-workflow.md](collaboration/12-phase-zero-manual-workflow.md)。
 - Dogfooding 或复盘：补读 [collaboration/10-dogfooding-plan.md](collaboration/10-dogfooding-plan.md) 和 [retrospectives/](retrospectives/00-index.md)。
 

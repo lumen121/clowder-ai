@@ -183,3 +183,9 @@ Codex 已完成两轮 T3 非作者 Review。
 ## 是否建议进入下一阶段
 
 非作者 Agent Review 已通过（两轮修正完成）。T3 门禁放行，可作为 T5/T6/T7/T9/T10/T14 的持久化基线。
+
+## 补充：页面查询视角验证
+
+P0-14/P0-15/P0-16 批准后，产品负责人要求 T3 证明能支撑页面读取。详见 [27-t3-page-query-verification.md](27-t3-page-query-verification.md)。
+
+结论：T3 现有 API（`read` / `list(filter)` / `update`）零修改支撑全部 5 个页面视图的数据读写。15 项页面查询验证全部通过。最近关键结论由页面/应用服务层聚合（符合架构要求）。
