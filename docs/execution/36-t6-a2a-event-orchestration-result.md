@@ -1,6 +1,6 @@
 # T6 A2A 事件编排与记录结果
 
-> 状态：待 Review（Codex Review 修复已完成）
+> 状态：通过（Codex 非作者 Review 已通过）
 > 所属：执行
 > 规则效力：T6 交付记录
 > 维护角色：系统架构师
@@ -36,7 +36,7 @@ T6 已实现 A2A 事件编排与记录的最小可用能力。核心模块 `src/
 | 文件 | 说明 |
 | --- | --- |
 | `src/a2a/orchestrator.js` | A2A 编排核心模块：事件创建、T4 集成、响应记录、查询、摘要 |
-| `src/a2a/__verify.js` | T6 自动化验证脚本：71 项测试，覆盖全部 12 种类型 |
+| `src/a2a/__verify.js` | T6 自动化验证脚本：95 项测试，覆盖全部 12 种类型、脱敏、DI 和前置校验 |
 | `src/index.js` | 修改：新增 T6 导出（16 个符号） |
 | `docs/execution/36-t6-a2a-event-orchestration-result.md` | 本文档 |
 
@@ -98,7 +98,7 @@ summarizeA2A(persistence, workItemId)
 | `risk_alert` | ✅ | 创建 + 手动升级测试通过 |
 | `task_breakdown_feedback` | ✅ | 创建测试通过 |
 | `task_handover` | ✅ | 创建测试通过 |
-| `execution_sync` | ✅ | 创建 + T4 集成测试通过 |
+| `execution_sync` | ✅ | 创建 + T4 结果包装纯函数/DI 路径验证通过；真实 CLI E2E 待 T16 |
 | `review_request` | ✅ | 创建 + 响应记录测试通过 |
 | `fix_request` | ✅ | 创建 + 按任务查询测试通过 |
 | `verification_request` | ✅ | 创建测试通过 |
@@ -209,7 +209,7 @@ Codex 已完成 T6 非作者 Review，结论为"需要修改"（[37-t6-review-by
 
 | 风险 | 影响 | 处理 |
 | --- | --- | --- |
-| `initiateA2AInteraction` 和 `invokeAndRecord` 未在验证脚本中测试（需要真实 CLI） | 集成路径仅在手动场景验证 | T16 E2E 验证应覆盖真实 A2A 调用路径；当前自检已覆盖纯函数路径 |
+| `initiateA2AInteraction(invokeTarget=true)` 和 `invokeAndRecord()` 的真实 CLI 路径未在验证脚本中测试（需要真实 CLI 环境） | DI 注入路径和前置校验路径已测；真实 CLI 调用链路待验证 | T16 E2E 必须覆盖真实 A2A 调用路径；`buildA2AFromInvocation()` 纯函数和 `invokeAndRecord()` DI 注入已通过自检 |
 | T4 `recordAgentInvocation()` 使用 `to_agent: "Clowder"` | T4 写入的 A2A 事件不在标准 agent 身份列表中 | T6 的 `invokeAndRecord` 使用正确身份；建议 Codex 后续统一 T4 身份 |
 | A2A 事件无分页/时间范围查询 | 首版数据量小可接受 | 后续如数据量增长，可在 Store 层增加分页支持 |
 
