@@ -1,0 +1,18 @@
+{
+  "name": "clowder-ai",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Local single-user multi-agent collaboration harness prototype.",
+  "type": "commonjs",
+  "scripts": {
+    "check": "node scripts/check-js.js",
+    "page": "node bin/clowder-page.js",
+    "test": "node test/work-item-entry.test.js && node test/agent-cli-adapter.test.js",
+    "verify:agents": "node scripts/verify-agent-cli.js"
+  },
+  "bin": {
+    "clowder-agent": "bin/clowder-agent.js",
+    "clowder-page": "bin/clowder-page.js",
+    "clowder-work-item": "bin/clowder-work-item.js"
+  }
+}

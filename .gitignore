@@ -6,3 +6,8 @@ dist/
 build/
 coverage/
 *.log
+
+# Local persistence and verification data
+data/**/*.json
+data/**/*.tmp
+data/__*/

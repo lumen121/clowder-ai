@@ -1,0 +1,38 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '{\"systemMessage\": \"MEMORY.md 已加载。项目记忆索引位于 .claude/projects/.../MEMORY.md，重要节点请提醒写入记忆。\"}'"
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '{\"systemMessage\": \"上下文即将压缩。会话中的重要决策、冲突、修复模式等请先写入记忆（memory/*.md），压缩后这些细节将丢失。\"}'"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if (git diff --name-only HEAD -- docs/execution/ 2>/dev/null; git ls-files --others --exclude-standard -- docs/execution/ 2>/dev/null) | grep -q .; then echo '{\"systemMessage\": \"docs/execution/ 有未提交的变更 — 确认是否需要写入记忆\"}'; fi",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -18,6 +18,13 @@
 - [execution/](execution/00-index.md)：当前执行计划、阶段门禁和执行节奏，不放构建产物或发布包。
 - [retrospectives/](retrospectives/00-index.md)：复盘、Review 和历史改进记录。
 
+## 当前变更提案
+
+- [product/14-page-user-participation-proposal.md](product/14-page-user-participation-proposal.md)
+- [product/15-page-change-implementation-clarifications.md](product/15-page-change-implementation-clarifications.md)
+- [architecture/15-page-user-participation-architecture-change.md](architecture/15-page-user-participation-architecture-change.md)
+- [architecture/16-page-change-architecture-clarifications.md](architecture/16-page-change-architecture-clarifications.md)
+
 ## 文档权重
 
 1. `product/`、`collaboration/`、`agents/` 是当前产品与协作基线，Agent 执行时必须遵守。
@@ -39,6 +46,9 @@
 - [architecture/11-architecture-brief.md](architecture/11-architecture-brief.md)
 - [architecture/14-system-architecture-design.md](architecture/14-system-architecture-design.md)
 - [execution/15-implementation-plan.md](execution/15-implementation-plan.md)
+- [product/14-page-user-participation-proposal.md](product/14-page-user-participation-proposal.md)
+- [product/15-page-change-implementation-clarifications.md](product/15-page-change-implementation-clarifications.md)
+- [architecture/16-page-change-architecture-clarifications.md](architecture/16-page-change-architecture-clarifications.md)
 
 选读：
 
@@ -64,6 +74,8 @@ Agent 不得自行选择身份并开始执行。零阶段人工调度或未来 H
 - Review 方。
 - 验收标准。
 - 禁止事项。
+- 开发类任务的维护性注释要求。
+- Git 写入动作的 Agent 身份要求。
 
 被分配的 Agent 执行任务前必读：
 
@@ -72,6 +84,7 @@ Agent 不得自行选择身份并开始执行。零阶段人工调度或未来 H
 - [product/09-risk-controls.md](product/09-risk-controls.md)
 - [collaboration/03-a2a-collaboration-protocol.md](collaboration/03-a2a-collaboration-protocol.md)
 - [collaboration/04-harness-governance.md](collaboration/04-harness-governance.md)
+- [collaboration/13-task-start-package-template.md](collaboration/13-task-start-package-template.md)
 - 由任务启动上下文指定的角色文档：
   - [agents/05-agent-codex.md](agents/05-agent-codex.md)
   - [agents/06-agent-claude.md](agents/06-agent-claude.md)
@@ -84,6 +97,7 @@ Agent 不得自行选择身份并开始执行。零阶段人工调度或未来 H
 - 需求统筹、方案设计或任务拆解：补读 [product/02-requirements-backlog.md](product/02-requirements-backlog.md)、[product/13-decisions-and-assumptions.md](product/13-decisions-and-assumptions.md)、[architecture/14-system-architecture-design.md](architecture/14-system-architecture-design.md)。
 - 代码实现或 Bug 修复：补读 [architecture/14-system-architecture-design.md](architecture/14-system-architecture-design.md) 和当前任务上下文。
 - UI、视觉、多模态、语音、视频、图片或交互体验任务：补读 [agents/07-agent-minimax.md](agents/07-agent-minimax.md) 和相关体验任务上下文。
+- 页面级用户参与、T2/T3 页面变更补齐、T13 或 T16：补读 [product/14-page-user-participation-proposal.md](product/14-page-user-participation-proposal.md)、[product/15-page-change-implementation-clarifications.md](product/15-page-change-implementation-clarifications.md) 和 [architecture/16-page-change-architecture-clarifications.md](architecture/16-page-change-architecture-clarifications.md)。
 - 零阶段人工协作：补读 [collaboration/12-phase-zero-manual-workflow.md](collaboration/12-phase-zero-manual-workflow.md)。
 - Dogfooding 或复盘：补读 [collaboration/10-dogfooding-plan.md](collaboration/10-dogfooding-plan.md) 和 [retrospectives/](retrospectives/00-index.md)。
 
