@@ -15,7 +15,7 @@
 ## 验证前提
 
 ```text
-npm run check  → checked 12 JavaScript files
+npm run check  → checked 16 JavaScript files
 npm test       → work-item-entry tests passed
 node src/storage/__verify.js → 42 通过, 0 失败
 ```
@@ -363,7 +363,7 @@ T3 页面查询视角验证
 ── 视图 5：Review / 门禁 / 复盘 ──
 
 ══════════════════════════════════════════════════
-结果: 14 通过, 0 失败, 14 总计
+结果: 15 通过, 0 失败, 15 总计
 ══════════════════════════════════════════════════
 ```
 
