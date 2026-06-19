@@ -12,6 +12,7 @@
  */
 
 const storage = require("./storage");
+const stateMachine = require("./work-items/state-machine");
 
 module.exports = {
   // ── Store 实例（底层 CRUD：read / update / delete / list / count）──
@@ -45,4 +46,16 @@ module.exports = {
 
   // ── 可注入 dataDir 的工厂（测试/验证用）─────────────────────────
   createPersistence:         storage.createPersistence,
+
+  // ── 状态机（T5）───────────────────────────────────────────────────
+  WORK_ITEM_TRANSITIONS:     stateMachine.TRANSITIONS,
+  WORK_ITEM_STATUSES:        stateMachine.WORK_ITEM_STATUSES,
+  transitionWorkItem:        stateMachine.transitionWorkItem,
+  validateTransition:        stateMachine.transition,
+  canTransitionWorkItem:     stateMachine.canTransition,
+  isWorkItemTerminal:        stateMachine.isTerminal,
+  isWorkItemBlocked:         stateMachine.isBlocked,
+
+  // ── 底层模块引用（高级用法）─────────────────────────────────────
+  stateMachine,
 };
