@@ -16,6 +16,7 @@
 - [20-t3-t2-review-retrospective-by-claude.md](20-t3-t2-review-retrospective-by-claude.md)：Claude 对 T3/T2 Review、提交边界和证据链补录的轻量复盘。
 - [21-t2-and-t3-review-retrospective-by-codex.md](21-t2-and-t3-review-retrospective-by-codex.md)：Codex 对 T2 实现、T3 Review、提交身份和后续改进的轻量复盘。
 - [22-t4-agent-cli-adapter-retrospective-by-codex.md](22-t4-agent-cli-adapter-retrospective-by-codex.md)：Codex 对 T4 Agent CLI 适配、Review 建议处理和后续改进输入的轻量复盘。
+- [23-t5-state-machine-retrospective-by-claude.md](23-t5-state-machine-retrospective-by-claude.md)：Claude 对 T5 状态机实现、worktree 隔离和 Review 闭环的轻量复盘。
 
 ## 使用规则
 

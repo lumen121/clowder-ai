@@ -15,6 +15,7 @@ const storage = require("./storage");
 const agents = require("./agents/cli-adapter");
 const agentRecording = require("./agents/response-recording");
 const taskContext = require("./agents/task-context");
+const stateMachine = require("./work-items/state-machine");
 
 module.exports = {
   // ── Store 实例（底层 CRUD：read / update / delete / list / count）──
@@ -57,4 +58,15 @@ module.exports = {
   validateTaskContext:       taskContext.validateTaskContext,
   recordAgentInvocation:     agentRecording.recordAgentInvocation,
   redactSensitiveText:       agentRecording.redactSensitiveText,
+
+  // ── 状态机（T5）───────────────────────────────────────────────────
+  WORK_ITEM_TRANSITIONS:     stateMachine.TRANSITIONS,
+  transitionWorkItem:        stateMachine.transitionWorkItem,
+  validateTransition:        stateMachine.transition,
+  canTransitionWorkItem:     stateMachine.canTransition,
+  isWorkItemTerminal:        stateMachine.isTerminal,
+  isWorkItemBlocked:         stateMachine.isBlocked,
+
+  // ── 底层模块引用（高级用法）─────────────────────────────────────
+  stateMachine,
 };
