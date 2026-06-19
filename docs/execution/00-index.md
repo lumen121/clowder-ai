@@ -21,6 +21,8 @@
 - [25-change-impact-assessment-p0-14-16.md](25-change-impact-assessment-p0-14-16.md)：P0-14/15/16 变更影响评估（Claude），结论为 T3 无修改、补齐在 T13。
 - [26-t2-change-impact-assessment-p0-14-16-by-codex.md](26-t2-change-impact-assessment-p0-14-16-by-codex.md)：T2 对 P0-14/15/16 的变更影响评估（Codex），结论为当前 T2 不满足新页面主入口基线，需补齐最小页面录入入口。
 - [27-t3-page-query-verification.md](27-t3-page-query-verification.md)：T3 页面查询视角验证（Claude），15 项通过，证明持久化模块零修改支撑 5 个页面视图。
+- [29-t4-agent-cli-adapter-start-package.md](29-t4-agent-cli-adapter-start-package.md)：T4 任务启动包，定义 Agent CLI 适配与最小调用闭环的执行上下文、边界、门禁和交付约束。
+- [32-t5-work-item-state-machine-start-package.md](32-t5-work-item-state-machine-start-package.md)：T5 任务启动包，定义工作项状态机的执行上下文、边界、门禁和交付约束。
 
 ## 产品澄清引用
 
