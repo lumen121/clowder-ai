@@ -9,9 +9,11 @@
 
 ## 当前文档
 
+- [task-status-board.md](task-status-board.md)：T1-T16 任务级状态、证据、阻塞和下一步的跟踪入口。
+- [current-action-tracker.md](current-action-tracker.md)：当前开放事项、Owner、状态、阻塞、完成证据和下一步动作的跟踪入口。
 - [15-implementation-plan.md](15-implementation-plan.md)：基于系统架构设计的一周实现任务拆解与开发计划。
 - [19-t1-baseline-confirmation-result.md](19-t1-baseline-confirmation-result.md)：T1 实现基线确认结果，供非作者 Agent Review 使用。
-- [20-t1-review-by-claude.md](20-t1-review-by-claude.md)：T1 非作者 Review 报告（Claude），结论为需要修改。
+- [20-t1-review-by-claude.md](20-t1-review-by-claude.md)：T1 非作者 Review 报告（Claude），初始结论为需要修改，后续补充完成后已放行。
 - [21-t2-work-item-entry-result.md](21-t2-work-item-entry-result.md)：T2 工作项录入与类型选择/识别最小入口结果，供非作者 Agent Review 使用。
 - [22-t3-persistence-result.md](22-t3-persistence-result.md)：T3 逻辑模型与本地持久化结果，供非作者 Agent Review 使用。
 - [23-t2-review-by-claude.md](23-t2-review-by-claude.md)：T2 非作者 Review 报告（Claude），结论为需要修改。
@@ -27,6 +29,9 @@
 
 ## 使用规则
 
+- T1-T16 的任务级进度优先查看 [task-status-board.md](task-status-board.md)。
+- 当前开放事项和执行状态优先查看 [current-action-tracker.md](current-action-tracker.md)；复盘文档只记录历史事实，不维护实时进度。
+- 后续执行 Agent 启动任务前必须读取任务状态板、当前执行状态看板、执行计划和任务启动包模板。
 - 进入实现阶段后，必须从 `T1 实现基线确认` 开始。
 - 不得跳过 Git/worktree、Agent CLI、持久化、检查命令和编码策略验证。
 - 执行计划可以随阶段更新，但更新必须保留门禁原因和产品/架构确认记录。

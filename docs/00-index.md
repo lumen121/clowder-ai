@@ -84,6 +84,7 @@ Agent 不得自行选择身份并开始执行。零阶段人工调度或未来 H
 - [product/09-risk-controls.md](product/09-risk-controls.md)
 - [collaboration/03-a2a-collaboration-protocol.md](collaboration/03-a2a-collaboration-protocol.md)
 - [collaboration/04-harness-governance.md](collaboration/04-harness-governance.md)
+- [collaboration/13-task-start-package-template.md](collaboration/13-task-start-package-template.md)
 - 由任务启动上下文指定的角色文档：
   - [agents/05-agent-codex.md](agents/05-agent-codex.md)
   - [agents/06-agent-claude.md](agents/06-agent-claude.md)
