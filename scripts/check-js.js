@@ -12,7 +12,7 @@ const ROOT_FILES = [
   "minimal-codex.js",
   "minimal-mm.js",
 ];
-const DIRS = ["bin", "scripts", "src", "test"];
+const DIRS = ["bin", "public", "scripts", "src", "test"];
 
 function main() {
   const files = [

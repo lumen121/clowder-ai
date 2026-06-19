@@ -6,9 +6,11 @@
   "type": "commonjs",
   "scripts": {
     "check": "node scripts/check-js.js",
+    "page": "node bin/clowder-page.js",
     "test": "node test/work-item-entry.test.js"
   },
   "bin": {
+    "clowder-page": "bin/clowder-page.js",
     "clowder-work-item": "bin/clowder-work-item.js"
   }
 }

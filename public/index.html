@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Clowder AI 工作项录入</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="page-shell">
+      <section class="entry-panel" aria-labelledby="entry-title">
+        <div class="panel-header">
+          <p class="eyebrow">T2 页面入口</p>
+          <h1 id="entry-title">工作项录入</h1>
+          <p class="lede">提交功能需求或 Bug 修复，创建首个结构化 WorkItem。</p>
+        </div>
+
+        <form id="work-item-form" class="entry-form">
+          <div class="field">
+            <label for="request">请求内容</label>
+            <textarea
+              id="request"
+              name="raw_request"
+              rows="8"
+              required
+              placeholder="例如：保存时报错，需要修复并补充验证路径"
+            ></textarea>
+          </div>
+
+          <div class="form-grid">
+            <div class="field">
+              <label for="type">工作项类型</label>
+              <select id="type" name="type">
+                <option value="auto">自动识别</option>
+                <option value="feature">功能需求</option>
+                <option value="bug_fix">Bug 修复</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="title">标题</label>
+              <input id="title" name="title" type="text" placeholder="可选，默认取首行" />
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit">创建工作项</button>
+            <p id="form-status" role="status" aria-live="polite"></p>
+          </div>
+        </form>
+      </section>
+
+      <section class="result-panel" aria-labelledby="result-title">
+        <div class="panel-header compact">
+          <p class="eyebrow">初始状态</p>
+          <h2 id="result-title">等待创建</h2>
+        </div>
+
+        <div id="empty-state" class="empty-state">
+          <p>创建后会显示 WorkItem ID、类型、状态和识别置信度。</p>
+        </div>
+
+        <dl id="result-summary" class="result-summary hidden">
+          <div>
+            <dt>ID</dt>
+            <dd id="result-id"></dd>
+          </div>
+          <div>
+            <dt>类型</dt>
+            <dd id="result-type"></dd>
+          </div>
+          <div>
+            <dt>状态</dt>
+            <dd id="result-status"></dd>
+          </div>
+          <div>
+            <dt>标题 / 目标</dt>
+            <dd id="result-title-value"></dd>
+          </div>
+          <div>
+            <dt>识别结果</dt>
+            <dd id="result-detection"></dd>
+          </div>
+          <div>
+            <dt>持久化</dt>
+            <dd id="result-storage"></dd>
+          </div>
+        </dl>
+      </section>
+    </main>
+    <script src="/app.js"></script>
+  </body>
+</html>

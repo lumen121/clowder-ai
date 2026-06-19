@@ -1,8 +1,8 @@
 "use strict";
 
-const crypto = require("crypto");
-const fs = require("fs");
 const path = require("path");
+
+const storage = require("../storage");
 
 const WORK_ITEM_TYPES = Object.freeze({
   feature: {
@@ -47,10 +47,10 @@ const WORK_ITEM_TYPES = Object.freeze({
 });
 
 const INITIAL_STATUS = "needs_clarification";
-const DEFAULT_DATA_DIR = path.join(process.cwd(), "data", "work-items");
+const DEFAULT_DATA_DIR = path.join(process.cwd(), "data");
 
 function normalizeType(type) {
-  if (!type) {
+  if (!type || type === "auto") {
     return null;
   }
 
@@ -105,7 +105,7 @@ function detectWorkItemType(rawRequest) {
 
 function resolveWorkItemType({ explicitType, rawRequest }) {
   const normalized = normalizeType(explicitType);
-  if (explicitType && !normalized) {
+  if (explicitType && explicitType !== "auto" && !normalized) {
     throw new Error(`Unknown work item type: ${explicitType}`);
   }
 
@@ -121,82 +121,69 @@ function resolveWorkItemType({ explicitType, rawRequest }) {
   return detectWorkItemType(rawRequest);
 }
 
-function createWorkItem(input) {
-  const rawRequest = String(input.rawRequest || "").trim();
+function buildWorkItemInput(input = {}) {
+  const rawRequest = String(input.rawRequest || input.raw_request || "").trim();
   if (!rawRequest) {
     throw new Error("Work item request is required.");
   }
 
-  const now = input.now || new Date().toISOString();
   const typeDetection = resolveWorkItemType({
     explicitType: input.type,
     rawRequest,
   });
   const typeDefinition = WORK_ITEM_TYPES[typeDetection.type];
   const title = String(input.title || "").trim() || rawRequest.split(/\r?\n/)[0].slice(0, 80);
-  const id = input.id || buildWorkItemId(now);
+  const source = input.source || "internal";
 
   return {
-    id,
     type: typeDefinition.value,
-    type_label: typeDefinition.label,
-    title,
-    raw_request: rawRequest,
     status: INITIAL_STATUS,
-    assumptions: [],
-    ambiguities: [],
-    risks: [],
-    solution: null,
-    tasks: [],
-    disagreements: [],
-    escalations: [],
-    review_status: null,
-    quality_status: null,
-    delivery_status: null,
-    retrospective_status: null,
-    created_at: now,
-    updated_at: now,
-    source: input.source || "cli",
+    goal: rawRequest,
+    title,
     metadata: {
       schema_version: 1,
+      source,
       type_detection: typeDetection,
     },
   };
 }
 
-function saveWorkItem(workItem, options = {}) {
-  const dataDir = options.dataDir || DEFAULT_DATA_DIR;
-  fs.mkdirSync(dataDir, { recursive: true });
-
-  const filename = `${safeFilename(workItem.id)}.json`;
-  const filePath = path.join(dataDir, filename);
-  fs.writeFileSync(filePath, `${JSON.stringify(workItem, null, 2)}\n`, "utf8");
-
-  return filePath;
+function createWorkItem(input = {}, options = {}) {
+  const persistence = resolvePersistence(options);
+  const workItemInput = buildWorkItemInput(input);
+  return persistence.createWorkItem(workItemInput);
 }
 
-function createAndSaveWorkItem(input, options = {}) {
-  const workItem = createWorkItem(input);
-  const filePath = saveWorkItem(workItem, options);
-  return { workItem, filePath };
+function createAndSaveWorkItem(input = {}, options = {}) {
+  const workItem = createWorkItem(input, options);
+  return {
+    workItem,
+    storage: {
+      kind: "t3_work_item_store",
+      path: path.join(options.dataDir || DEFAULT_DATA_DIR, "work-items.json"),
+    },
+  };
 }
 
-function buildWorkItemId(isoTimestamp) {
-  const stamp = isoTimestamp.replace(/[-:.]/g, "").replace("T", "-").replace("Z", "Z");
-  return `wi-${stamp}-${crypto.randomUUID().slice(0, 8)}`;
-}
+function resolvePersistence(options = {}) {
+  if (options.persistence) {
+    return options.persistence;
+  }
 
-function safeFilename(value) {
-  return String(value).replace(/[^a-zA-Z0-9._-]/g, "_");
+  if (options.dataDir) {
+    return storage.createPersistence(options.dataDir);
+  }
+
+  return storage;
 }
 
 module.exports = {
   DEFAULT_DATA_DIR,
   INITIAL_STATUS,
   WORK_ITEM_TYPES,
+  buildWorkItemInput,
   createAndSaveWorkItem,
   createWorkItem,
   detectWorkItemType,
   normalizeType,
-  saveWorkItem,
 };

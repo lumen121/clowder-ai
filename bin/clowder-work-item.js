@@ -8,23 +8,29 @@ const { DEFAULT_DATA_DIR, createAndSaveWorkItem } = require("../src/work-items/c
 
 function main(argv) {
   const command = argv[2];
-  if (command !== "create") {
-    printUsage();
-    return 1;
+  switch (command) {
+    case "create":
+      return createCommand(argv.slice(3));
+    default:
+      printUsage();
+      return 1;
   }
+}
 
-  const options = parseArgs(argv.slice(3));
+function createCommand(args) {
+  const options = parseArgs(args);
   if (options.help) {
     printUsage();
     return 0;
   }
 
   const rawRequest = readRequest(options);
-  const { workItem, filePath } = createAndSaveWorkItem(
+  const { workItem, storage } = createAndSaveWorkItem(
     {
       rawRequest,
       title: options.title,
       type: options.type,
+      source: "cli_internal",
     },
     {
       dataDir: options.dataDir || DEFAULT_DATA_DIR,
@@ -32,14 +38,14 @@ function main(argv) {
   );
 
   if (options.json) {
-    process.stdout.write(`${JSON.stringify({ file_path: filePath, work_item: workItem }, null, 2)}\n`);
+    process.stdout.write(`${JSON.stringify({ storage, work_item: workItem }, null, 2)}\n`);
     return 0;
   }
 
   process.stdout.write(`Created work item ${workItem.id}\n`);
-  process.stdout.write(`Type: ${workItem.type_label} (${workItem.type})${typeHint(workItem)}\n`);
+  process.stdout.write(`Type: ${typeLabel(workItem)} (${workItem.type})${typeHint(workItem)}\n`);
   process.stdout.write(`Status: ${workItem.status}\n`);
-  process.stdout.write(`Path: ${filePath}\n`);
+  process.stdout.write(`Storage: ${storage.path}\n`);
   return 0;
 }
 
@@ -106,7 +112,7 @@ function readRequest(options) {
 }
 
 function printUsage() {
-  process.stdout.write(`Usage:
+  process.stdout.write(`Usage (internal / phase-zero entry):
   node bin/clowder-work-item.js create --type <feature|bug_fix> --request "<request>"
   node bin/clowder-work-item.js create --request "<request>" --json
 
@@ -115,7 +121,7 @@ Options:
   --request, -r     Raw user request text.
   --request-file    Read raw request text from a UTF-8 file.
   --title           Optional work item title.
-  --data-dir        Override persistence directory. Defaults to data/work-items.
+  --data-dir        Override persistence root. Defaults to data.
   --json            Print JSON output.
 `);
 }
@@ -136,6 +142,15 @@ function typeHint(workItem) {
 
   return " [auto-detected]";
 }
+
+function typeLabel(workItem) {
+  return WORK_ITEM_LABELS[workItem.type] || workItem.type;
+}
+
+const WORK_ITEM_LABELS = {
+  feature: "功能需求",
+  bug_fix: "Bug 修复",
+};
 
 try {
   process.exitCode = main(process.argv);
