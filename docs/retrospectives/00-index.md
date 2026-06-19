@@ -15,6 +15,7 @@
 - [19-phase-zero-point-five-retrospective.md](19-phase-zero-point-five-retrospective.md)：页面入口变更、T2/T3 部分回溯、AGENTS 规则和任务启动治理的阶段 0.5 复盘记录。
 - [20-t3-t2-review-retrospective-by-claude.md](20-t3-t2-review-retrospective-by-claude.md)：Claude 对 T3/T2 Review、提交边界和证据链补录的轻量复盘。
 - [21-t2-and-t3-review-retrospective-by-codex.md](21-t2-and-t3-review-retrospective-by-codex.md)：Codex 对 T2 实现、T3 Review、提交身份和后续改进的轻量复盘。
+- [22-t5-state-machine-retrospective-by-claude.md](22-t5-state-machine-retrospective-by-claude.md)：Claude 对 T5 状态机实现、worktree 隔离和 Review 闭环的轻量复盘。
 
 ## 使用规则
 
