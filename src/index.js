@@ -16,6 +16,7 @@ const agents = require("./agents/cli-adapter");
 const agentRecording = require("./agents/response-recording");
 const taskContext = require("./agents/task-context");
 const stateMachine = require("./work-items/state-machine");
+const a2aOrchestrator = require("./a2a/orchestrator");
 
 module.exports = {
   // ── Store 实例（底层 CRUD：read / update / delete / list / count）──
@@ -69,4 +70,24 @@ module.exports = {
 
   // ── 底层模块引用（高级用法）─────────────────────────────────────
   stateMachine,
+
+  // ── A2A 事件编排（T6）───────────────────────────────────────────────
+  // 核心
+  createA2AEventOrchestrated: a2aOrchestrator.createA2AEvent,
+  initiateA2AInteraction:     a2aOrchestrator.initiateA2AInteraction,
+  recordA2AResponse:          a2aOrchestrator.recordA2AResponse,
+  invokeAndRecord:            a2aOrchestrator.invokeAndRecord,
+  buildA2AFromInvocation:     a2aOrchestrator.buildA2AFromInvocation,
+  // 查询
+  getA2AByWorkItem:           a2aOrchestrator.getA2AByWorkItem,
+  getA2AByTask:               a2aOrchestrator.getA2AByTask,
+  getPendingA2A:              a2aOrchestrator.getPendingA2A,
+  getEscalatedA2A:            a2aOrchestrator.getEscalatedA2A,
+  getEscalatedA2AByWorkItem:  a2aOrchestrator.getEscalatedA2AByWorkItem,
+  // 摘要
+  summarizeA2A:               a2aOrchestrator.summarizeA2A,
+  // 常量
+  A2A_AGENT_IDENTITIES:       a2aOrchestrator.AGENT_IDENTITIES,
+  A2A_ESCALATION_PURPOSES:    a2aOrchestrator.ESCALATION_PURPOSES,
+  A2A_RESPONSE_EXPECTED:      a2aOrchestrator.RESPONSE_EXPECTED_PURPOSES,
 };
