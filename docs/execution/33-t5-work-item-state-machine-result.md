@@ -97,7 +97,7 @@ node src/storage/__page_query_verify.js       → 15 通过
 
 ## 治理偏差
 
-T5 未使用独立 worktree，产物落在 `feature/t2-work-item-entry` 分支。原因与 T3 相同：零阶段人工串行协作中，任务由用户协调串行执行。此偏差已记录为已知模式（见 `memory/worktree-governance-deviation.md`），后续真正并行任务（T8/T9 等）必须纠正。
+T5 初版未使用独立 worktree，产物落在 `feature/t2-work-item-entry` 分支。后已修正：当前实现位于独立 worktree `C:/aiWorkspace/clowder-ai-t5`，分支 `claude/t5-state-machine`。初版偏差已记录为 Claude 本地记忆（`memory/worktree-governance-deviation.md`），后续并行任务不再允许复用既有分支。
 
 ## 是否建议进入后续任务
 
