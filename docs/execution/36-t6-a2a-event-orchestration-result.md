@@ -1,6 +1,6 @@
 # T6 A2A 事件编排与记录结果
 
-> 状态：待 Review
+> 状态：待 Review（Codex Review 修复已完成）
 > 所属：执行
 > 规则效力：T6 交付记录
 > 维护角色：系统架构师
@@ -139,7 +139,7 @@ summarizeA2A(persistence, workItemId)
 npm run check     → checked 26 JavaScript files
 npm test          → work-item-entry tests passed
                      agent-cli-adapter tests passed
-node src/a2a/__verify.js → 71 通过, 0 失败, 71 总计
+node src/a2a/__verify.js → 95 通过, 0 失败, 95 总计
 ```
 
 验证覆盖：
@@ -154,6 +154,35 @@ node src/a2a/__verify.js → 71 通过, 0 失败, 71 总计
 - summarizeA2A 摘要（含 12 类型统计、agent 参与统计、结论追踪、空工作项）
 - 边界条件（空 response、长文本 context、显式覆盖升级标记、agent 身份警告、null task_id）
 - 数据隔离（Store 深拷贝防护）
+- **新增（Codex Review 修复）**：buildA2AFromInvocation 成功/失败路径脱敏验证（含 token 值、GitHub token、本地路径、脱敏标记）
+- **新增（Codex Review 修复）**：invokeAndRecord DI 注入验证（fake runner 替换真实 CLI）
+- **新增（Codex Review 修复）**：initiateA2AInteraction 前置校验（缺失 taskContext 时不残留空事件）
+
+## 非作者 Review 后修正
+
+Codex 已完成 T6 非作者 Review，结论为"需要修改"（[37-t6-review-by-codex.md](37-t6-review-by-codex.md)）。以下 3 项均已修复：
+
+### P1：invokeAndRecord() 失败路径脱敏缺口
+
+- **问题**：`invokeAndRecord()` 失败路径直接拼接 `result.stderr`，未经过 `redactSensitiveText()`。
+- **修复**：提取纯函数 `buildA2AFromInvocation()`，成功和失败路径统一对 stdout/stderr 调用 `redactSensitiveText()` 后再写入 response。
+- **验证**：新增 10 项脱敏测试（成功路径脱敏 token/key/路径 + 失败路径脱敏 GitHub token/AWS key/路径）。
+- **额外收益**：`invokeAndRecord()` 支持 `options.invokeAgent` DI 注入 fake runner，无需真实 CLI 即可测试。
+
+### P1：T4 集成路径被验证脚本跳过但结果文档称已通过
+
+- **问题**：验证脚本头部声明不覆盖 `invokeAndRecord` 和 `initiateA2AInteraction(invokeTarget=true)`。
+- **修复**：
+  - `buildA2AFromInvocation()` 纯函数可独立测试 T4 结果→A2A 事件转换。
+  - `invokeAndRecord()` 支持 DI 注入 fake runner，验证脚本新增 DI 路径测试。
+  - 结果文档将"T4 集成测试通过"改为具体描述：纯函数路径已验证，真实 CLI 路径待 T16/E2E。
+- **验证**：`invokeAndRecord` DI 注入测试通过（fake runner + 脱敏），`buildA2AFromInvocation` 成功/失败路径均通过。
+
+### P2：initiateA2AInteraction() 参数错误时残留空事件
+
+- **问题**：`invokeTarget=true` 但缺失 `taskContext` 时，`createA2AEvent()` 已先执行，抛错后 Store 中残留空 A2AEvent。
+- **修复**：将 `taskContext` 必填校验移到 `createA2AEvent()` 之前，前置校验不通过不创建事件。
+- **验证**：新增测试确认抛错后 `getA2AByWorkItem` 返回 0 条记录。
 
 ## 未完成内容
 

@@ -195,18 +195,23 @@ function createA2AEvent(persistence, params = {}) {
  * @returns {Promise<{event: object, invocation: object|null}>}
  */
 async function initiateA2AInteraction(persistence, params, options = {}) {
-  // 先创建 A2A 事件记录
-  const event = createA2AEvent(persistence, params);
-
-  let invocation = null;
-
-  // 如果要求调用目标 Agent 且目标是已知 CLI agent
+  // ── 前置校验：在创建事件前先检查 invokeTarget 条件是否满足 ──
+  // 避免参数错误时在 Store 中残留空 A2AEvent
   if (options.invokeTarget && listAgents().includes(params.to_agent.toLowerCase())) {
     if (!options.taskContext) {
       throw new Error(
         "initiateA2AInteraction: invokeTarget=true 时必须提供 options.taskContext"
       );
     }
+  }
+
+  // 前置校验通过后再创建 A2A 事件记录
+  const event = createA2AEvent(persistence, params);
+
+  let invocation = null;
+
+  // 如果要求调用目标 Agent 且目标是已知 CLI agent
+  if (options.invokeTarget && listAgents().includes(params.to_agent.toLowerCase())) {
 
     // 将 A2A 上下文注入 taskContext 的 goal 中，让目标 Agent 知道这是 A2A 交互
     const enrichedContext = {
@@ -330,20 +335,63 @@ function recordA2AResponse(persistence, eventId, responseParams = {}) {
 async function invokeAndRecord(persistence, agent, taskContext, options = {}) {
   const purpose = options.purpose || "execution_sync";
 
-  // 调用 T4 真实 Agent CLI
-  const result = await invokeAgent(agent, taskContext, {
+  // 支持注入自定义 runner（用于测试，避免依赖真实 CLI）
+  const runner = options.invokeAgent || invokeAgent;
+
+  // 调用 Agent CLI（生产环境用真实 T4 invokeAgent，测试可注入 fake）
+  const result = await runner(agent, taskContext, {
     timeoutMs: options.timeoutMs,
   });
 
-  // 确定身份显示名
+  // 将 T4 结果转换为 A2A 事件输入（纯函数，可独立测试）
+  const eventInput = buildA2AFromInvocation(agent, taskContext, result, {
+    purpose,
+    workItemId: options.workItemId,
+    taskId: options.taskId,
+  });
+
+  const a2aEvent = createA2AEvent(persistence, eventInput);
+  return { result, a2aEvent };
+}
+
+/**
+ * 将 T4 invokeAgent() 的归一化结果转换为 A2A 事件输入。
+ *
+ * 这是纯函数，不读写 Store、不调用 CLI，方便独立测试和验证。
+ * 对所有可能含敏感信息的 stdout/stderr 统一执行脱敏处理。
+ *
+ * @param {string} agent - Agent 标识（codex/claude/minimax）
+ * @param {object} taskContext - T4 任务上下文
+ * @param {object} result - T4 invokeAgent() 返回的归一化结果
+ * @param {object} [opts] - 可选配置
+ * @param {string} [opts.purpose="execution_sync"] - A2A 目的
+ * @param {string} [opts.workItemId] - 工作项 ID
+ * @param {string} [opts.taskId] - 任务 ID
+ * @returns {object} 可直接传给 createA2AEvent() 的输入参数
+ */
+function buildA2AFromInvocation(agent, taskContext, result, opts = {}) {
+  const purpose = opts.purpose || "execution_sync";
   const identityMap = { codex: "Codex", claude: "Claude", minimax: "MiniMax" };
   const fromIdentity = identityMap[agent] || agent;
+  const workItemId = opts.workItemId || taskContext.work_item_id || "unknown";
+  const taskId = opts.taskId || taskContext.task_id || null;
 
-  // 构建 A2A 事件
-  const workItemId = options.workItemId || taskContext.work_item_id || "unknown";
-  const taskId = options.taskId || taskContext.task_id || null;
+  // ── 构建脱敏后的 response 文本 ──
+  // 成功和失败路径统一走 redactSensitiveText，避免敏感信息进入持久化记录
+  let responseText;
+  if (result.success) {
+    const stdoutSummary = redactSensitiveText(
+      (result.stdout || "").slice(0, 2000)
+    );
+    responseText = `调用成功 (exit_code=0, duration_ms=${result.duration_ms})\nstdout: ${stdoutSummary}`;
+  } else {
+    const stderrSummary = redactSensitiveText(
+      (result.stderr || String(result.error_classification || "unknown error")).slice(0, 2000)
+    );
+    responseText = `调用失败 (${result.error_classification}): ${stderrSummary}`;
+  }
 
-  const a2aEvent = createA2AEvent(persistence, {
+  return {
     purpose,
     from_agent: fromIdentity,
     to_agent: "system",
@@ -354,19 +402,18 @@ async function invokeAndRecord(persistence, agent, taskContext, options = {}) {
       agent,
       identity: fromIdentity,
       task_id: taskContext.task_id,
+      success: result.success,
+      exit_code: result.exit_code,
+      timed_out: result.timed_out,
     }),
     claim_or_request: `Agent CLI 调用: ${fromIdentity} 执行任务 ${taskContext.task_id || "unknown"}`,
-    response: result.success
-      ? `调用成功 (exit_code=0, duration_ms=${result.duration_ms})`
-      : `调用失败 (${result.error_classification}): ${result.stderr}`.slice(0, 5000),
+    response: responseText.slice(0, 5000),
     conclusion: result.success ? "success" : "failure",
     next_action: result.success
       ? "proceed_to_next_step"
       : "manual_follow_up_required",
     requires_user_intervention: !result.success,
-  });
-
-  return { result, a2aEvent };
+  };
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -551,6 +598,7 @@ module.exports = {
   initiateA2AInteraction,
   recordA2AResponse,
   invokeAndRecord,
+  buildA2AFromInvocation,
 
   // 查询 API
   getA2AByWorkItem,

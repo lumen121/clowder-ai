@@ -77,6 +77,7 @@ module.exports = {
   initiateA2AInteraction:     a2aOrchestrator.initiateA2AInteraction,
   recordA2AResponse:          a2aOrchestrator.recordA2AResponse,
   invokeAndRecord:            a2aOrchestrator.invokeAndRecord,
+  buildA2AFromInvocation:     a2aOrchestrator.buildA2AFromInvocation,
   // 查询
   getA2AByWorkItem:           a2aOrchestrator.getA2AByWorkItem,
   getA2AByTask:               a2aOrchestrator.getA2AByTask,
