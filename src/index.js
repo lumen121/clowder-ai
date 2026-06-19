@@ -12,6 +12,9 @@
  */
 
 const storage = require("./storage");
+const agents = require("./agents/cli-adapter");
+const agentRecording = require("./agents/response-recording");
+const taskContext = require("./agents/task-context");
 
 module.exports = {
   // ── Store 实例（底层 CRUD：read / update / delete / list / count）──
@@ -45,4 +48,13 @@ module.exports = {
 
   // ── 可注入 dataDir 的工厂（测试/验证用）─────────────────────────
   createPersistence:         storage.createPersistence,
+
+  // T4 Agent CLI adapter
+  invokeAgent:               agents.invokeAgent,
+  listAgents:                agents.listAgents,
+  buildTaskContext:          taskContext.buildTaskContext,
+  formatTaskContextPrompt:   taskContext.formatTaskContextPrompt,
+  validateTaskContext:       taskContext.validateTaskContext,
+  recordAgentInvocation:     agentRecording.recordAgentInvocation,
+  redactSensitiveText:       agentRecording.redactSensitiveText,
 };

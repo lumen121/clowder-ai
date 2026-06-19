@@ -7,9 +7,11 @@
   "scripts": {
     "check": "node scripts/check-js.js",
     "page": "node bin/clowder-page.js",
-    "test": "node test/work-item-entry.test.js"
+    "test": "node test/work-item-entry.test.js && node test/agent-cli-adapter.test.js",
+    "verify:agents": "node scripts/verify-agent-cli.js"
   },
   "bin": {
+    "clowder-agent": "bin/clowder-agent.js",
     "clowder-page": "bin/clowder-page.js",
     "clowder-work-item": "bin/clowder-work-item.js"
   }
