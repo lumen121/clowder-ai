@@ -15,8 +15,8 @@
 | 项 | 结果 |
 | --- | --- |
 | 执行身份 | Claude；Git 写入身份 `Clowder Claude <claude@clowder.local>` |
-| branch | `worktree-claude+t6-a2a-orchestration` |
-| worktree | `C:\aiWorkspace\clowder-ai\.claude\worktrees\claude+t6-a2a-orchestration` |
+| branch | `worktree-claude+t6-a2a-orchestration-v2` |
+| worktree | `C:\aiWorkspace\clowder-ai-t6` |
 | 基线 | `27cd8c2`（master，含 T4+T5） |
 | Review 方 | Codex |
 | 状态 | 已完成实现和自检，待 Codex Review |
