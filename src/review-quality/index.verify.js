@@ -339,6 +339,7 @@ const revApprovedUnresolved = reviewQuality.createReview(p, {
 const summaryApproved = reviewQuality.summarizeReviews(p, "wi-approved-test");
 assertEqual(summaryApproved.unresolved, 0, "summarizeReviews approved 不计入 unresolved");
 assertEqual(summaryApproved.approved, 1, "summarizeReviews approved 计数正确");
+assertEqual(summaryApproved.latest_unresolved, null, "summarizeReviews approved 未解决时 latest_unresolved 为 null");
 
 // ═══════════════════════════════════════════════════════════════════════
 // PART 2: 质量门禁管理
