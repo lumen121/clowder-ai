@@ -118,14 +118,22 @@ check("最小字段创建（仅必填）", () => {
   assert(ws.merge_order === 0, "merge_order 默认 0");
 });
 
-// 1.3 worktree_path 自动推导
-check("worktree_path 自动推导（按约定 clowder-ai-<task>）", () => {
+// 1.3 worktree_path 自动推导（应在仓库父目录，而非仓库内部）
+check("worktree_path 自动推导到仓库同级目录（非仓库内部）", () => {
   const ws = registerWorkspace(persistence, {
     task_id: "T8",
     agent: "Codex",
     branch: "codex/t8-harness",
   });
-  assert(ws.worktree_path.includes("clowder-ai-t8"), `自动推导路径应含 clowder-ai-t8，实际: ${ws.worktree_path}`);
+  // 推导路径应包含 clowder-ai-t8 且位于仓库父目录下
+  // e.g. C:\aiWorkspace\clowder-ai-t8，而非 C:\aiWorkspace\...\...\clowder-ai-t8
+  const p = ws.worktree_path;
+  assert(p.includes("clowder-ai-t8"), `路径应含 clowder-ai-t8，实际: ${p}`);
+  // 不应是仓库内部的子目录（即不应在 clowder-ai-t<N> 下再嵌套 clowder-ai-t<N>）
+  const normalized = p.replace(/\\/g, "/");
+  const matches = normalized.match(/clowder-ai-t\d+/g);
+  assert(matches && matches.length === 1,
+    `路径应恰好包含一个 clowder-ai-t<N>，实际: ${normalized}`);
 });
 
 // 1.4 base_ref 正确记录
@@ -328,6 +336,30 @@ check("无效 persistence 拒绝（getWorkspaceByBranch）", () => {
   assertThrow(() => getWorkspaceByBranch(null, "b"), "有效的 persistence");
 });
 
+// P1 修复验证：branch 归档后重新绑定，查询应返回活跃记录
+check("branch 归档后重新绑定 → getWorkspaceByBranch 返回活跃记录", () => {
+  const branchReuse = "codex/t12-reusable-branch";
+  // 第一条绑定：创建后归档
+  const first = registerWorkspace(persistence, {
+    task_id: "T12",
+    agent: "Codex",
+    branch: branchReuse,
+  });
+  updateWorkspaceStatus(persistence, first.id, { cleanup_status: "archived" });
+  // 第二条绑定：同一 branch 重新登记（活跃）
+  const second = registerWorkspace(persistence, {
+    task_id: "T12-v2",
+    agent: "Codex",
+    branch: branchReuse,
+  });
+  // 查询应返回正在活跃的第二条，而非历史归档的第一条
+  const found = getWorkspaceByBranch(persistence, branchReuse);
+  assert(found !== null, "应找到记录");
+  assert(found.id === second.id, `应返回活跃记录 ${second.id}，而非归档记录 ${first.id}`);
+  assert(found.cleanup_status === "active", "应为 active 状态");
+  assert(found.task_id === "T12-v2", "应为重新绑定后的任务");
+});
+
 console.log("\n── getActiveWorkspaces ──");
 
 check("getActiveWorkspaces 返回仅 active 记录", () => {
@@ -444,6 +476,31 @@ check("空 branch → fail + reasons", () => {
   const result = preMergeCheck(persistence, "");
   assert(result.pass === false);
   assert(result.reasons.length > 0);
+});
+
+// P1 修复验证：branch 归档后重建，preMergeCheck 应命中新记录并通过
+check("branch 归档后重新绑定 → preMergeCheck 通过", () => {
+  const reuseBranch = "codex/t14-reuse-for-merge";
+  // 创建 → 归档
+  const oldWs = registerWorkspace(persistence, {
+    task_id: "T14",
+    agent: "Claude",
+    branch: reuseBranch,
+  });
+  updateWorkspaceStatus(persistence, oldWs.id, { cleanup_status: "archived" });
+  // 同一 branch 重新绑定（冲突状态 clean）
+  registerWorkspace(persistence, {
+    task_id: "T14-v2",
+    agent: "Claude",
+    branch: reuseBranch,
+    conflict_status: "clean",
+  });
+  const result = preMergeCheck(persistence, reuseBranch);
+  assert(result.pass === true,
+    `应通过，实际: pass=${result.pass}, reasons=${result.reasons.join("; ")}`);
+  assert(result.workspace !== null);
+  assert(result.workspace.cleanup_status === "active");
+  assert(result.workspace.task_id === "T14-v2", "应命中重新绑定后的记录");
 });
 
 // ═══════════════════════════════════════════════════════════════════════

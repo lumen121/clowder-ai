@@ -119,9 +119,12 @@ function registerWorkspace(persistence, input = {}) {
   }
 
   // 自动推导 worktree_path（遵循已建立的 worktree 路径约定）
+  // __dirname = <repo>/src/worktree/ → 3 层 dirname 到达仓库父目录
+  // 例如: C:\aiWorkspace\clowder-ai-t10\src\worktree → C:\aiWorkspace
+  // 结果: C:\aiWorkspace\clowder-ai-<task>
   const worktree_path = input.worktree_path ||
     path.resolve(
-      path.dirname(path.dirname(__dirname)),
+      path.dirname(path.dirname(path.dirname(__dirname))),
       `clowder-ai-${String(input.task_id || "").toLowerCase().replace(/\s+/g, "-")}`
     );
 
@@ -229,6 +232,12 @@ function getWorkspaceByTask(persistence, taskId) {
 /**
  * 按分支名查找工作区记录（branch 一对一，返回单条或 null）。
  *
+ * 查询策略：优先返回 cleanup_status === "active" 的记录；
+ * 若无活跃记录，则返回该 branch 下最新一条记录（按 created_at 降序）；
+ * 无任何记录时返回 null。
+ *
+ * 此策略确保 branch 在归档后重新绑定时，查询命中当前活跃绑定而非历史归档记录。
+ *
  * @param {object} persistence
  * @param {string} branch
  * @returns {object|null} WorkspaceRecord（结构化克隆）或 null
@@ -237,7 +246,16 @@ function getWorkspaceByBranch(persistence, branch) {
   if (!persistence || !persistence.workspaceRecordStore) {
     throw new Error("getWorkspaceByBranch 需要有效的 persistence 实例");
   }
-  return findOne(persistence.workspaceRecordStore, (r) => r.branch === branch);
+  const store = persistence.workspaceRecordStore;
+  const active = findOne(store, (r) => r.branch === branch && r.cleanup_status === "active");
+  if (active) return active;
+  // 无活跃记录时，返回最新一条（按 created_at 降序），供历史查询
+  const all = findAll(store, (r) => r.branch === branch);
+  if (all.length === 0) return null;
+  all.sort((a, b) =>
+    new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()
+  );
+  return all[0];
 }
 
 /**

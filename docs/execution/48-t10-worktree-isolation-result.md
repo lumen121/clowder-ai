@@ -1,6 +1,6 @@
 # T10 Worktree 与任务隔离最小治理结果
 
-> 状态：待 Review
+> 状态：修复完成，待复核
 > 所属：执行
 > 规则效力：T10 交付记录
 > 维护角色：系统架构师
@@ -77,7 +77,7 @@ T10 已在 T3 WorkspaceRecord 之上实现了任务到 branch/worktree 的绑定
 ## 验证结果
 
 ```
-node src/worktree/isolation-governance.verify.js  → 42/42 通过
+node src/worktree/isolation-governance.verify.js  → 44/44 通过
 npm run check                                      → 31 JavaScript files OK
 npm test                                           → work-item-entry + agent-cli-adapter 通过
 ```
@@ -90,6 +90,22 @@ npm test                                           → work-item-entry + agent-c
 - 查询：按 task / branch / active / conflicting
 - preMergeCheck：通过（clean+active、resolved+active）/ 失败（无绑定、file_conflict、semantic_conflict_risk、cleaned）/ 边界（无效 persistence、空 branch）
 - 常量：WS_CLEANUP_STATUSES 枚举和冻结
+
+## Codex Review 后修复
+
+Codex 非作者 Review（[49-t10-review-by-codex.md](49-t10-review-by-codex.md)）发现两项 P1 问题，均已修复：
+
+### P1-1：分支复用后 `getWorkspaceByBranch` 命中归档记录
+
+- **问题**：branch 归档→重新绑定后，`getWorkspaceByBranch` 返回旧归档记录，导致 `preMergeCheck` 误判失败
+- **修复**：`getWorkspaceByBranch` 优先返回 `cleanup_status === "active"` 的记录；无活跃记录时回退到最新历史记录
+- **验证**：新增 2 项测试（查询 + preMergeCheck 场景），44/44 通过
+
+### P1-2：默认 `worktree_path` 推导到仓库内部
+
+- **问题**：`path.dirname` 层级少一级，推导结果在仓库根目录下（如 `clowder-ai-t10/clowder-ai-t8`）而非约定的同级目录（`C:\aiWorkspace\clowder-ai-t8`）
+- **修复**：`path.dirname` 由 2 层改为 3 层，从仓库父目录推导
+- **验证**：worktree_path 测试从"包含 clowder-ai-t8"提升为"恰好包含一个 clowder-ai-t<N>"，确保不在仓库内部嵌套
 
 ## 未完成内容
 
