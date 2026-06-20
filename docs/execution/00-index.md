@@ -42,6 +42,8 @@
 - [47-t8-review-by-claude.md](47-t8-review-by-claude.md)：T8 非作者 Review 报告（Claude），结论为通过。
 - [48-t10-worktree-isolation-result.md](48-t10-worktree-isolation-result.md)：T10 Worktree 与任务隔离最小治理结果，Codex 非作者 Review 已通过。
 - [49-t10-review-by-codex.md](49-t10-review-by-codex.md)：T10 非作者 Review 报告（Codex），修复后复核通过。
+- [50-t9-review-quality-gate-start-package.md](50-t9-review-quality-gate-start-package.md)：T9 任务启动包，定义 Review 与质量门禁记录的执行上下文、边界、门禁和交付约束。
+- [51-t12-escalation-page-confirmation-start-package.md](51-t12-escalation-page-confirmation-start-package.md)：T12 任务启动包，定义人工升级与页面确认流程的执行上下文、边界、门禁和交付约束。
 
 ## 产品澄清引用
 
