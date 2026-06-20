@@ -216,7 +216,8 @@ function queryReviews(persistence, filters = {}) {
 /**
  * 生成工作项的 Review 摘要。
  *
- * 摘要包含各类结论计数、未解决数和最近一次 Review，供 T11/T13/T14/T16 消费。
+ * 摘要包含各类结论计数、未解决数（所有 resolved=false 的非 approved Review）
+ * 和最近一次 Review，供 T11/T13/T14/T16 消费。
  *
  * @param {object} persistence - T3 持久化实例
  * @param {string} workItemId - 工作项 ID
@@ -245,7 +246,9 @@ function summarizeReviews(persistence, workItemId) {
 
   for (const r of reviews) {
     counts[r.result] = (counts[r.result] || 0) + 1;
-    if (!r.resolved && r.result === "changes_requested") {
+    // 统计所有未解决的非通过 Review（changes_requested / disputed / user_confirmation_required），
+    // 而不仅限于 changes_requested。approved 即使 resolved=false 也不算未解决。
+    if (!r.resolved && r.result !== "approved") {
       unresolved++;
     }
     byReviewer[r.reviewer_agent] = (byReviewer[r.reviewer_agent] || 0) + 1;
@@ -289,16 +292,43 @@ function summarizeReviews(persistence, workItemId) {
 // ═══════════════════════════════════════════════════════════════════════
 
 /**
- * 创建质量门禁运行记录（T3 工厂的薄封装）。
+ * 创建质量门禁运行记录。
  *
  * 必填：work_item_id、gate_name。
- * final_status 默认为 "passed"。
+ *
+ * 门禁不可静默通过：当 final_status 为 "passed"（默认）时，
+ * 必须提供 validation_method 和 result 作为可审计证据。
+ * 空门禁记录（无真实执行结果）不得被 T8 放行。
  *
  * @param {object} persistence - T3 createPersistence() 返回值
  * @param {object} input - 质量门禁参数
  * @returns {object} 创建的 QualityGateRun（深拷贝）
  */
 function createQualityGate(persistence, input = {}) {
+  // T3 默认 final_status="passed"，但空门禁记录不得被静默放行。
+  // 当门禁状态为 passed 时，要求 validation_method 和 result 非空，
+  // 确保有可审计证据证明门禁确实执行并通过。
+  //
+  // 仅当必填字段已提供时才做 P1 证据校验；必填字段缺失时交由 T3 报错，
+  // 避免掩盖 T3 的 "缺少必填字段" 错误信息。
+  const hasRequired = input.work_item_id && input.gate_name;
+  const finalStatus = input.final_status || "passed";
+
+  if (hasRequired && finalStatus === "passed") {
+    const missing = [];
+    if (!input.validation_method || typeof input.validation_method !== "string" || !input.validation_method.trim()) {
+      missing.push("validation_method");
+    }
+    if (!input.result || typeof input.result !== "string" || !input.result.trim()) {
+      missing.push("result");
+    }
+    if (missing.length > 0) {
+      throw new Error(
+        `createQualityGate: 门禁不能静默通过。final_status=passed 时必须提供: ${missing.join(", ")}。`
+      );
+    }
+  }
+
   return persistence.createQualityGateRun(input);
 }
 

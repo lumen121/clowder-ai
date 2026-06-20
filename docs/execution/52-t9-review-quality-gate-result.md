@@ -14,9 +14,20 @@
 | --- | --- |
 | 执行身份 | Claude；Git 写入身份 `Clowder Claude <claude@clowder.local>` |
 | branch | `claude/t9-review-quality-gate` |
+| worktree | 未使用独立 worktree（偏离启动包要求，见下方说明） |
+| 实际工作区 | `C:\aiWorkspace\clowder-ai`（主仓库，master 工作树） |
 | 基线 | `2f13f92`（master，含 T9/T12 启动包） |
+| 冲突状态 | clean（T9 分支仅包含 T9 相关文件，无跨任务混入） |
 | Review 方 | Codex |
-| 状态 | 已完成实现、自检，待 Codex 非作者 Review |
+| 状态 | 修复完成，待 Codex 复核 |
+
+### worktree 偏离说明
+
+启动包要求"独立 branch/worktree"。T9 实现时使用了独立分支 `claude/t9-review-quality-gate`，但未创建独立 worktree，而是在主仓库目录下工作。
+
+- **原因**：T9 为纯逻辑模块，不涉及多 Agent 并行文件冲突风险；T10/T12 等任务也未同时修改 T9 依赖的文件（`src/storage/index.js`、`src/index.js`），且 T9 分支已确保与 master 隔离。
+- **风险控制**：T9 提交（`146a5af` + 修复提交）仅包含 T9 核心模块、验证脚本、结果文档、状态板更新和索引更新，不含 T12 或其他任务产物。
+- **后续改进**：涉及多文件或并行开发的任务（T11/T13/T16）应严格使用独立 worktree。
 
 ## 总体结论
 
@@ -120,6 +131,28 @@ npm run verify:harness                    → 22/22 通过（零回归）
 - 数据隔离：Review/QualityGate 读深拷贝 / queryReviews/queryQualityGates 返回深拷贝
 - 常量：REVIEW_RESULTS/QG_FINAL_STATUSES 枚举完整性 / 校验函数
 - T8 兼容：reviewRecordStore.list() / hasApprovedReviewForTask / qualityGateRunStore.list() / latestRecord + final_status
+
+## Codex Review 后修复
+
+Codex 非作者 Review（[54-t9-review-by-codex.md](54-t9-review-by-codex.md)）发现 1 项 P1 + 2 项 P2，均已修复：
+
+### P1：空 QualityGateRun 默认 `passed` 可绕过 T8 质量门禁
+
+- **问题**：`createQualityGate()` 薄封装 T3 工厂，默认 `final_status=passed`，无真实执行结果也可创建"通过"记录，被 T8 `validateQualityGate` 放行。
+- **修复**：`createQualityGate()` 增加证据校验——当 `final_status=passed` 且必填字段已提供时，要求 `validation_method` 和 `result` 非空。同时仅当 `work_item_id` 和 `gate_name` 已提供时才执行此校验，避免掩盖 T3 的"缺少必填字段"错误。
+- **验证**：新增 4 项测试（无 evidence 拒绝 / 缺 validation_method 拒绝 / 缺 result 拒绝 / 非 passed 状态允许无 evidence）+ 2 项 T8 回归测试（空门禁拒绝创建 + 有 evidence 门禁正常通过）。
+
+### P2-1：Review 摘要 `unresolved` 语义不一致
+
+- **问题**：`summarizeReviews()` 中 `unresolved` 仅统计 `changes_requested` 未解决，但 `latest_unresolved` 覆盖所有未解决 Review，导致 `disputed`/`user_confirmation_required` 场景出现 `unresolved=0` 但存在未解决 Review。
+- **修复**：`unresolved` 改为统计所有 `resolved=false` 且 `result !== "approved"` 的 Review（含 changes_requested / disputed / user_confirmation_required）。
+- **验证**：新增 3 项测试（disputed 未解决计数 / user_confirmation_required 未解决计数 / approved 不计入 unresolved）。
+
+### P2-2：worktree 隔离证据不满足启动包要求
+
+- **问题**：未使用独立 worktree，结果文档未记录 worktree、负责人和冲突状态。
+- **修复**：结果文档补充实际工作区说明、偏离原因、风险控制措施和后续改进要求。T9 提交仅包含 T9 相关文件，无跨任务混入。
+- **验证**：`git diff --name-only master...claude/t9-review-quality-gate` 确认仅 T9 相关文件。
 
 ## 范围外确认
 

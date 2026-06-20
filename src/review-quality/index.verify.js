@@ -306,33 +306,99 @@ assertEqual(summary2.unresolved, 1, "summarizeReviews 统计未解决的 changes
 assert(summary2.latest_unresolved !== null, "summarizeReviews latest_unresolved 非 null");
 assertEqual(summary2.latest_unresolved.required_fixes_count, 2, "summarizeReviews latest_unresolved.required_fixes_count 正确");
 
+// 27a. P2 修复：disputed 未解决计入 unresolved
+const revDisputed = reviewQuality.createReview(p, {
+  work_item_id: "wi-disputed-test",
+  author_agent: "Codex",
+  reviewer_agent: "Claude",
+  result: "disputed",
+});
+const summaryDisputed = reviewQuality.summarizeReviews(p, "wi-disputed-test");
+assertEqual(summaryDisputed.unresolved, 1, "summarizeReviews disputed 未解决计入 unresolved");
+assertEqual(summaryDisputed.disputed, 1, "summarizeReviews disputed 计数正确");
+
+// 27b. P2 修复：user_confirmation_required 未解决计入 unresolved
+const revUcr = reviewQuality.createReview(p, {
+  work_item_id: "wi-ucr-test",
+  author_agent: "Codex",
+  reviewer_agent: "Claude",
+  result: "user_confirmation_required",
+});
+const summaryUcr = reviewQuality.summarizeReviews(p, "wi-ucr-test");
+assertEqual(summaryUcr.unresolved, 1, "summarizeReviews user_confirmation_required 未解决计入 unresolved");
+assertEqual(summaryUcr.user_confirmation_required, 1, "summarizeReviews user_confirmation_required 计数正确");
+
+// 27c. P2 修复：approved 即使 resolved=false 也不计入 unresolved
+const revApprovedUnresolved = reviewQuality.createReview(p, {
+  work_item_id: "wi-approved-test",
+  author_agent: "Claude",
+  reviewer_agent: "Codex",
+  result: "approved",
+  // resolved 默认 false
+});
+const summaryApproved = reviewQuality.summarizeReviews(p, "wi-approved-test");
+assertEqual(summaryApproved.unresolved, 0, "summarizeReviews approved 不计入 unresolved");
+assertEqual(summaryApproved.approved, 1, "summarizeReviews approved 计数正确");
+
 // ═══════════════════════════════════════════════════════════════════════
 // PART 2: 质量门禁管理
 // ═══════════════════════════════════════════════════════════════════════
 
 console.log("\n── 质量门禁创建 ──");
 
-// 28. 基本创建
+// 28. 基本创建（passed 必须提供 evidence）
 const qg1 = reviewQuality.createQualityGate(p, {
   work_item_id: "wi-test",
   task_id: "task-test",
   gate_name: "npm test",
   validation_method: "npm test",
+  result: "All 33 tests passed",
 });
 assert(qg1.id && qg1.id.startsWith("qg-"), "createQualityGate 生成 qg- 前缀 ID");
 assertEqual(qg1.work_item_id, "wi-test", "createQualityGate 设置 work_item_id");
 assertEqual(qg1.gate_name, "npm test", "createQualityGate 设置 gate_name");
-assertEqual(qg1.final_status, "passed", "createQualityGate final_status 默认 passed");
+assertEqual(qg1.final_status, "passed", "createQualityGate final_status=passed（有证据）");
 
-// 29. 默认值
+// 29. passed 无证据拒绝（P1 修复：空门禁不得静默通过）
+assertThrows(
+  () => reviewQuality.createQualityGate(p, {
+    work_item_id: "wi-test2",
+    gate_name: "npm run check",
+  }),
+  "门禁不能静默通过",
+  "createQualityGate 拒绝无 evidence 的 passed 门禁"
+);
+
+// 29a. passed 无 validation_method 拒绝
+assertThrows(
+  () => reviewQuality.createQualityGate(p, {
+    work_item_id: "wi-test2",
+    gate_name: "lint",
+    result: "no errors",
+  }),
+  "validation_method",
+  "createQualityGate 拒绝缺 validation_method 的 passed 门禁"
+);
+
+// 29b. passed 无 result 拒绝
+assertThrows(
+  () => reviewQuality.createQualityGate(p, {
+    work_item_id: "wi-test2",
+    gate_name: "lint",
+    validation_method: "eslint",
+  }),
+  "result",
+  "createQualityGate 拒绝缺 result 的 passed 门禁"
+);
+
+// 29c. 非 passed 状态无需 evidence（留给 recordGateFailure 处理）
 const qg2 = reviewQuality.createQualityGate(p, {
   work_item_id: "wi-test2",
   gate_name: "npm run check",
+  final_status: "failed",
 });
-assertEqual(qg2.final_status, "passed", "createQualityGate 默认 final_status=passed");
-assertEqual(qg2.safe_fix_attempted, false, "createQualityGate 默认 safe_fix_attempted=false");
-assertEqual(qg2.failed_command, "", "createQualityGate 默认 failed_command 空字符串");
-assertEqual(qg2.failure_summary, "", "createQualityGate 默认 failure_summary 空字符串");
+assertEqual(qg2.final_status, "failed", "createQualityGate 非 passed 状态允许无 evidence");
+assertEqual(qg2.failed_command, "", "createQualityGate 非 passed 默认 T9 字段为空");
 
 // 30. 非法 final_status 枚举
 assertThrows(
@@ -404,6 +470,7 @@ console.log("\n── 门禁失败记录 ──");
 const qgFail = reviewQuality.createQualityGate(p, {
   work_item_id: "wi-fail-test",
   gate_name: "npm run verify",
+  final_status: "failed",  // 非 passed，无需 evidence，留给 recordGateFailure 填写
 });
 const failRecord = reviewQuality.recordGateFailure(p, qgFail.id, {
   failed_command: "npm run verify",
@@ -493,6 +560,8 @@ reviewQuality.createQualityGate(p, {
   work_item_id: "wi-mixed",
   gate_name: "lint",
   final_status: "passed",
+  validation_method: "eslint",
+  result: "0 errors, 0 warnings",
 });
 reviewQuality.createQualityGate(p, {
   work_item_id: "wi-mixed",
@@ -502,6 +571,7 @@ reviewQuality.createQualityGate(p, {
 const qgMixedFail = reviewQuality.createQualityGate(p, {
   work_item_id: "wi-mixed",
   gate_name: "verify",
+  final_status: "failed",  // 非 passed，留给 recordGateFailure
 });
 reviewQuality.recordGateFailure(p, qgMixedFail.id, {
   failed_command: "node verify.js",
@@ -623,6 +693,33 @@ const latest = [...t8Gates].sort((a, b) =>
   new Date(a.updated_at || a.created_at).getTime()
 )[0];
 assert(latest && latest.final_status === "failed", "T8 兼容：latest gate final_status 正确");
+
+// 63. P1 回归：空门禁记录不能被 T8 放行
+// 验证 createQualityGate 现在拒绝无 evidence 的 passed 门禁
+assertThrows(
+  () => reviewQuality.createQualityGate(p, {
+    work_item_id: "wi-bypass-test",
+    gate_name: "phantom-gate",
+    // 故意不传 validation_method 和 result
+  }),
+  "门禁不能静默通过",
+  "P1 回归：空门禁记录（无 evidence）不能被创建为 passed"
+);
+
+// 64. P1 回归：有 evidence 的门禁可以正常通过 T8
+const legitimateQg = reviewQuality.createQualityGate(p, {
+  work_item_id: "wi-legit-test",
+  gate_name: "npm run check",
+  validation_method: "npm run check",
+  result: "checked 35 JavaScript files",
+});
+const legitGates = p.qualityGateRunStore.list((r) => r.work_item_id === "wi-legit-test");
+const legitLatest = [...legitGates].sort((a, b) =>
+  new Date(b.updated_at || b.created_at).getTime() -
+  new Date(a.updated_at || a.created_at).getTime()
+)[0];
+assert(legitLatest && legitLatest.final_status === "passed", "P1 回归：有 evidence 的 passed 门禁正常存在");
+assert(legitLatest.validation_method && legitLatest.result, "P1 回归：有 evidence 的 passed 门禁包含可审计证据");
 
 // ═══════════════════════════════════════════════════════════════════════
 // 结果
