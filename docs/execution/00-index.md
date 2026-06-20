@@ -36,6 +36,8 @@
 - [41-t7-review-by-claude.md](41-t7-review-by-claude.md)：T7 非作者 Review 报告（Claude），结论为通过。
 - [42-t13a-lite-user-console-result.md](42-t13a-lite-user-console-result.md)：T13A Lite 用户操作台最小入口结果，Codex 非作者 Review 修复已完成。
 - [43-t13a-lite-review-by-codex.md](43-t13a-lite-review-by-codex.md)：T13A Lite 非作者 Review 报告（Codex），结论为需修改后复核。
+- [44-t8-harness-core-rails-start-package.md](44-t8-harness-core-rails-start-package.md)：T8 任务启动包，定义 Harness 核心护栏的执行上下文、边界、门禁和交付约束。
+- [45-t10-worktree-isolation-start-package.md](45-t10-worktree-isolation-start-package.md)：T10 任务启动包，定义 worktree 与任务隔离最小治理的执行上下文、边界、门禁和交付约束。
 
 ## 产品澄清引用
 
