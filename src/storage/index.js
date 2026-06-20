@@ -128,6 +128,11 @@ const QUALITY_GATE_DEFAULTS = {
   work_item_id: "", task_id: null, gate_name: "", validation_method: "",
   result: "", failure_reason: "", safe_fix_attempted: false,
   final_status: "passed",
+  // T9: 结构化失败记录字段（门禁失败时必填）
+  failed_command: "",
+  failure_summary: "",
+  impact_scope: "",
+  next_actions: "",
 };
 
 const QUALITY_GATE_REQUIRED = {

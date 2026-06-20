@@ -20,6 +20,7 @@ const solutionBreakdown = require("./work-items/solution-breakdown");
 const a2aOrchestrator = require("./a2a/orchestrator");
 const harnessCoreRails = require("./harness/core-rails");
 const isolationGovernance = require("./worktree/isolation-governance");
+const reviewQuality = require("./review-quality");
 
 module.exports = {
   // ── Store 实例（底层 CRUD：read / update / delete / list / count）──
@@ -116,4 +117,20 @@ module.exports = {
   preMergeCheck:              isolationGovernance.preMergeCheck,
   WS_CLEANUP_STATUSES:        isolationGovernance.WS_CLEANUP_STATUSES,
   isolationGovernance,
+
+  // ── Review 与质量门禁记录（T9）────────────────────────────────────
+  validateReviewResult:       reviewQuality.validateReviewResult,
+  validateFinalStatus:        reviewQuality.validateFinalStatus,
+  validateNoSelfReview:       reviewQuality.validateNoSelfReview,
+  createReview:               reviewQuality.createReview,
+  updateReview:               reviewQuality.updateReview,
+  resolveReview:              reviewQuality.resolveReview,
+  queryReviews:               reviewQuality.queryReviews,
+  summarizeReviews:           reviewQuality.summarizeReviews,
+  createQualityGate:          reviewQuality.createQualityGate,
+  updateQualityGate:          reviewQuality.updateQualityGate,
+  recordGateFailure:          reviewQuality.recordGateFailure,
+  queryQualityGates:          reviewQuality.queryQualityGates,
+  summarizeQualityGates:      reviewQuality.summarizeQualityGates,
+  reviewQuality,
 };
