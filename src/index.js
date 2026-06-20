@@ -23,6 +23,7 @@ const escalationFlow = require("./escalations/escalation-flow");
 const isolationGovernance = require("./worktree/isolation-governance");
 const reviewQuality = require("./review-quality");
 const gitDelivery = require("./git-delivery/delivery-safety");
+const retrospective = require("./retrospective");
 
 module.exports = {
   // ── Store 实例（底层 CRUD：read / update / delete / list / count）──
@@ -162,4 +163,12 @@ module.exports = {
   expectedGitIdentity:       gitDelivery.expectedGitIdentity,
   isMainBranch:              gitDelivery.isMainBranch,
   gitDelivery,
+
+  // ── 复盘记录（T14）────────────────────────────────────────────────
+  aggregateFacts:            retrospective.aggregateFacts,
+  generateRetrospective:     retrospective.generateRetrospective,
+  updateRetrospective:       retrospective.updateRetrospective,
+  queryRetrospectives:       retrospective.queryRetrospectives,
+  summarizeRetrospective:    retrospective.summarizeRetrospective,
+  retrospective,
 };

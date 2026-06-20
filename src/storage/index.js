@@ -202,6 +202,12 @@ const RETROSPECTIVE_DEFAULTS = {
   review_findings: [], quality_gate_results: [],
   user_intervention_reasons: [], process_improvement_suggestions: [],
   technical_execution_suggestions: [], confirmed_as_baseline: false,
+  // T14: 复盘记录最小闭环新增字段
+  participating_agents: [],     // 参与 Agent 列表（事实）
+  rework_count: 0,              // 返工轮次（事实）
+  retrospective_conclusion: "", // 复盘总结论（结论）
+  escalation_results: [],       // 升级记录摘要（事实）
+  aggregated_facts: {},         // 聚合事实（类型/状态/A2A次数/交付结果等）
 };
 
 const RETROSPECTIVE_REQUIRED = {
