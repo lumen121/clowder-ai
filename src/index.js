@@ -19,6 +19,7 @@ const stateMachine = require("./work-items/state-machine");
 const solutionBreakdown = require("./work-items/solution-breakdown");
 const a2aOrchestrator = require("./a2a/orchestrator");
 const harnessCoreRails = require("./harness/core-rails");
+const isolationGovernance = require("./worktree/isolation-governance");
 
 module.exports = {
   // ── Store 实例（底层 CRUD：read / update / delete / list / count）──
@@ -104,4 +105,15 @@ module.exports = {
   evaluateHighRiskAction:     harnessCoreRails.evaluateHighRiskAction,
   guardedTransitionWorkItem:  harnessCoreRails.guardedTransitionWorkItem,
   harnessCoreRails,
+
+  // ── Worktree 隔离治理（T10）────────────────────────────────────────
+  registerWorkspace:          isolationGovernance.registerWorkspace,
+  updateWorkspaceStatus:      isolationGovernance.updateWorkspaceStatus,
+  getWorkspaceByTask:         isolationGovernance.getWorkspaceByTask,
+  getWorkspaceByBranch:       isolationGovernance.getWorkspaceByBranch,
+  getActiveWorkspaces:        isolationGovernance.getActiveWorkspaces,
+  getConflictingWorkspaces:   isolationGovernance.getConflictingWorkspaces,
+  preMergeCheck:              isolationGovernance.preMergeCheck,
+  WS_CLEANUP_STATUSES:        isolationGovernance.WS_CLEANUP_STATUSES,
+  isolationGovernance,
 };

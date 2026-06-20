@@ -40,6 +40,8 @@
 - [45-t10-worktree-isolation-start-package.md](45-t10-worktree-isolation-start-package.md)：T10 任务启动包，定义 worktree 与任务隔离最小治理的执行上下文、边界、门禁和交付约束。
 - [46-t8-harness-core-rails-result.md](46-t8-harness-core-rails-result.md)：T8 Harness 核心护栏结果，Claude 非作者 Review 已通过。
 - [47-t8-review-by-claude.md](47-t8-review-by-claude.md)：T8 非作者 Review 报告（Claude），结论为通过。
+- [48-t10-worktree-isolation-result.md](48-t10-worktree-isolation-result.md)：T10 Worktree 与任务隔离最小治理结果，Codex 非作者 Review 已通过。
+- [49-t10-review-by-codex.md](49-t10-review-by-codex.md)：T10 非作者 Review 报告（Codex），修复后复核通过。
 
 ## 产品澄清引用
 

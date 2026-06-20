@@ -142,8 +142,8 @@ const WS_CONFLICT_STATUSES = [
 
 const WORKSPACE_DEFAULTS = {
   agent: "", task_id: "", branch: "", worktree_path: "",
-  changed_files: [], merge_order: 0, conflict_status: "clean",
-  cleanup_status: "active",
+  base_ref: "", changed_files: [], merge_order: 0,
+  conflict_status: "clean", cleanup_status: "active",
 };
 
 const WORKSPACE_REQUIRED = {
