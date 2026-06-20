@@ -18,6 +18,7 @@ const taskContext = require("./agents/task-context");
 const stateMachine = require("./work-items/state-machine");
 const solutionBreakdown = require("./work-items/solution-breakdown");
 const a2aOrchestrator = require("./a2a/orchestrator");
+const harnessCoreRails = require("./harness/core-rails");
 
 module.exports = {
   // ── Store 实例（底层 CRUD：read / update / delete / list / count）──
@@ -97,4 +98,10 @@ module.exports = {
   A2A_AGENT_IDENTITIES:       a2aOrchestrator.AGENT_IDENTITIES,
   A2A_ESCALATION_PURPOSES:    a2aOrchestrator.ESCALATION_PURPOSES,
   A2A_RESPONSE_EXPECTED:      a2aOrchestrator.RESPONSE_EXPECTED_PURPOSES,
+
+  // ── Harness 核心护栏（T8）────────────────────────────────────────
+  evaluateHarnessRails:       harnessCoreRails.evaluateHarnessRails,
+  evaluateHighRiskAction:     harnessCoreRails.evaluateHighRiskAction,
+  guardedTransitionWorkItem:  harnessCoreRails.guardedTransitionWorkItem,
+  harnessCoreRails,
 };

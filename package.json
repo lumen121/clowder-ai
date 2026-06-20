@@ -8,6 +8,7 @@
     "check": "node scripts/check-js.js",
     "page": "node bin/clowder-page.js",
     "test": "node test/work-item-entry.test.js && node test/agent-cli-adapter.test.js",
+    "verify:harness": "node src/harness/core-rails.verify.js",
     "verify:agents": "node scripts/verify-agent-cli.js"
   },
   "bin": {
