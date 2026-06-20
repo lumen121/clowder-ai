@@ -98,6 +98,139 @@ function renderPackages(packages) {
   packagesList.classList.remove("hidden");
 }
 
+// ── 升级确认 ──────────────────────────────────────────────────────────
+
+const escalationsLoading = document.querySelector("#escalations-loading");
+const escalationsEmpty = document.querySelector("#escalations-empty");
+const escalationsList = document.querySelector("#escalations-list");
+
+async function loadEscalations() {
+  try {
+    const resp = await fetch("/api/console/escalations");
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const data = await resp.json();
+    renderEscalations(data.escalations || []);
+  } catch (err) {
+    escalationsLoading.classList.remove("hidden");
+    escalationsLoading.innerHTML = `<p>无法加载待确认项：${esc(err.message)}</p>`;
+  }
+}
+
+function renderEscalations(records) {
+  escalationsLoading.classList.add("hidden");
+  escalationsList.innerHTML = "";
+
+  if (!records.length) {
+    escalationsEmpty.classList.remove("hidden");
+    escalationsList.classList.add("hidden");
+    return;
+  }
+
+  escalationsEmpty.classList.add("hidden");
+  for (const record of records) {
+    escalationsList.appendChild(buildEscalationItem(record));
+  }
+  escalationsList.classList.remove("hidden");
+}
+
+function buildEscalationItem(record) {
+  const article = document.createElement("article");
+  article.className = "escalation-item";
+  article.dataset.escalationId = record.id;
+
+  const options = (record.options || []).map((option) =>
+    `<li>${esc(option)}</li>`
+  ).join("");
+
+  article.innerHTML = `
+    <div class="escalation-header">
+      <div>
+        <p class="eyebrow">${esc(record.blocked_gate || record.trigger_type || "escalation")}</p>
+        <h3>${esc(record.what_happened || record.id)}</h3>
+      </div>
+      <span class="status-badge status-review">${esc(record.status)}</span>
+    </div>
+    <dl class="escalation-details">
+      <div><dt>WorkItem</dt><dd>${esc(record.work_item_id)}</dd></div>
+      <div><dt>触发规则</dt><dd>${esc(record.trigger_rule)}</dd></div>
+      <div><dt>风险</dt><dd>${esc(record.risks)}</dd></div>
+      <div><dt>建议下一步</dt><dd>${esc(record.recommended_next_step)}</dd></div>
+    </dl>
+    <div class="escalation-options">
+      <span>可选动作</span>
+      <ul>${options || "<li>等待人工判断</li>"}</ul>
+    </div>
+    <form class="escalation-decision-form">
+      <div class="form-grid console-form-grid">
+        <div class="field">
+          <label for="decision-${esc(record.id)}">处理结果</label>
+          <select id="decision-${esc(record.id)}" name="decision">
+            <option value="confirm">确认继续</option>
+            <option value="reject">拒绝继续</option>
+            <option value="request_info">补充信息</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="decider-${esc(record.id)}">确认人</label>
+          <input id="decider-${esc(record.id)}" name="decided_by" value="user" />
+        </div>
+      </div>
+      <div class="field">
+        <label for="detail-${esc(record.id)}">说明</label>
+        <textarea id="detail-${esc(record.id)}" name="detail" rows="3" placeholder="记录确认理由、拒绝原因或需要补充的信息"></textarea>
+      </div>
+      <div class="form-actions">
+        <button type="submit">写回确认</button>
+        <p class="escalation-status" role="status" aria-live="polite"></p>
+      </div>
+    </form>
+  `;
+
+  article.querySelector(".escalation-decision-form").addEventListener("submit", (event) => {
+    event.preventDefault();
+    submitEscalationDecision(record.id, article);
+  });
+  return article;
+}
+
+async function submitEscalationDecision(escalationId, container) {
+  const form = container.querySelector(".escalation-decision-form");
+  const status = container.querySelector(".escalation-status");
+  const button = form.querySelector("button[type='submit']");
+  const formData = new FormData(form);
+  const payload = {
+    decision: String(formData.get("decision") || ""),
+    decided_by: String(formData.get("decided_by") || "user"),
+    detail: String(formData.get("detail") || ""),
+  };
+
+  button.disabled = true;
+  status.textContent = "正在写回...";
+  status.classList.remove("error");
+
+  try {
+    const resp = await fetch(`/api/console/escalations/${encodeURIComponent(escalationId)}/decision`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const body = await resp.json();
+    if (!resp.ok) throw new Error(body.error || "写回失败");
+    status.textContent = `已写回 (${body.escalation.status})。`;
+    addRecentRecord({
+      id: body.escalation.id,
+      created_at: body.escalation.updated_at,
+      response: `${body.escalation.user_decision}: ${body.escalation.decision_detail}`,
+    });
+    await loadEscalations();
+  } catch (err) {
+    status.textContent = err.message;
+    status.classList.add("error");
+  } finally {
+    button.disabled = false;
+  }
+}
+
 // ── 用户录入 ──────────────────────────────────────────────────────────
 
 const inputForm = document.querySelector("#user-input-form");
@@ -205,4 +338,5 @@ function setInputBusy(isBusy) {
 
 loadStatus();
 loadPackages();
+loadEscalations();
 initRelatedTasks();

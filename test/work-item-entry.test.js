@@ -7,6 +7,7 @@ const http = require("http");
 const os = require("os");
 const path = require("path");
 
+const { createPersistence } = require("../src/storage");
 const {
   createAndSaveWorkItem,
   createWorkItem,
@@ -26,6 +27,8 @@ async function run() {
   testPathBoundaryCheck();
   await testPageApiCreatesWorkItem();
   await testPageApiRejectsEmptyRequest();
+  await testConsoleEscalationsApiListsPendingItems();
+  await testConsoleEscalationDecisionApiWritesBack();
   process.stdout.write("work-item-entry tests passed\n");
 }
 
@@ -166,6 +169,90 @@ async function testPageApiRejectsEmptyRequest() {
   }
 }
 
+async function testConsoleEscalationsApiListsPendingItems() {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "clowder-t12-page-list-"));
+  const persistence = createPersistence(tempDir);
+  const workItem = persistence.createWorkItem({ goal: "Need confirmation", status: "blocked" });
+  persistence.createEscalationRecord({
+    work_item_id: workItem.id,
+    status: "pending_user_confirmation",
+    trigger_type: "high_risk_action",
+    trigger_rule: "HIGH_RISK_ACTION_REQUIRES_CONFIRMATION",
+    what_happened: "Push to master needs confirmation.",
+    blocked_gate: "permission",
+    options: ["confirm", "reject"],
+    risks: "Direct push to master is high-risk.",
+    recommended_next_step: "Wait for user decision.",
+  });
+
+  const server = startServer({ host: "127.0.0.1", port: 0, dataDir: tempDir });
+  try {
+    const { response, body } = await requestJson(server, "/api/console/escalations");
+    assert.strictEqual(response.statusCode, 200);
+    const parsed = JSON.parse(body);
+    assert.strictEqual(parsed.escalations.length, 1);
+    assert.strictEqual(parsed.escalations[0].work_item_id, workItem.id);
+    assert.strictEqual(parsed.escalations[0].status, "pending_user_confirmation");
+  } finally {
+    server.close();
+  }
+}
+
+async function testConsoleEscalationDecisionApiWritesBack() {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "clowder-t12-page-decision-"));
+  const persistence = createPersistence(tempDir);
+  const workItem = persistence.createWorkItem({ goal: "Need confirmation", status: "blocked" });
+  const escalation = persistence.createEscalationRecord({
+    work_item_id: workItem.id,
+    status: "pending_user_confirmation",
+    trigger_type: "high_risk_action",
+    trigger_rule: "HIGH_RISK_ACTION_REQUIRES_CONFIRMATION",
+    what_happened: "Deploy needs confirmation.",
+    blocked_gate: "permission",
+    options: ["confirm", "reject"],
+    risks: "Deploy is high-risk.",
+    recommended_next_step: "Wait for user decision.",
+    user_decision: "",
+    decision_detail: "",
+    decided_by: "",
+    decided_at: "",
+    next_action_after_decision: "",
+  });
+
+  const server = startServer({ host: "127.0.0.1", port: 0, dataDir: tempDir });
+  try {
+    const { response, body } = await postJson(
+      server,
+      `/api/console/escalations/${encodeURIComponent(escalation.id)}/decision`,
+      {
+        decision: "confirm",
+        decided_by: "user",
+        detail: "可以继续。",
+      },
+    );
+    assert.strictEqual(response.statusCode, 200);
+    const parsed = JSON.parse(body);
+    assert.strictEqual(parsed.escalation.status, "confirmed");
+    assert.strictEqual(parsed.escalation.user_decision, "confirm");
+
+    const savedEscalations = JSON.parse(
+      fs.readFileSync(path.join(tempDir, "escalation-records.json"), "utf8")
+    );
+    const saved = savedEscalations.find((item) => item.id === escalation.id);
+    assert.strictEqual(saved.user_decision, "confirm");
+
+    const savedA2AEvents = JSON.parse(
+      fs.readFileSync(path.join(tempDir, "a2a-events.json"), "utf8")
+    );
+    assert.ok(savedA2AEvents.some((item) =>
+      item.work_item_id === workItem.id &&
+      item.context.includes("escalation_user_decision")
+    ));
+  } finally {
+    server.close();
+  }
+}
+
 function testPageCliHelpDoesNotStartServer() {
   const result = spawnSync(
     process.execPath,
@@ -215,6 +302,40 @@ function postJson(server, requestPath, payload) {
       );
       request.on("error", reject);
       request.end(json);
+    };
+    if (server.listening) {
+      send();
+    } else {
+      server.once("listening", send);
+    }
+    server.on("error", reject);
+  });
+}
+
+function requestJson(server, requestPath) {
+  return new Promise((resolve, reject) => {
+    const send = () => {
+      const { port } = server.address();
+      const request = http.request(
+        {
+          host: "127.0.0.1",
+          port,
+          path: requestPath,
+          method: "GET",
+        },
+        (response) => {
+          let body = "";
+          response.setEncoding("utf8");
+          response.on("data", (chunk) => {
+            body += chunk;
+          });
+          response.on("end", () => {
+            resolve({ response, body });
+          });
+        },
+      );
+      request.on("error", reject);
+      request.end();
     };
     if (server.listening) {
       send();

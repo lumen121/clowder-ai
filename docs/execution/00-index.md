@@ -47,6 +47,8 @@
 - [52-t9-review-quality-gate-result.md](52-t9-review-quality-gate-result.md)：T9 Review 与质量门禁记录结果，Codex 非作者 Review 已通过。
 - [53-t12-start-package-review-by-claude.md](53-t12-start-package-review-by-claude.md)：T12 启动包 Claude 前置审查，结论为需补充后启动。
 - [54-t9-review-by-codex.md](54-t9-review-by-codex.md)：T9 非作者 Review 报告（Codex），两轮复核通过。
+- [54-t12-escalation-page-confirmation-result.md](54-t12-escalation-page-confirmation-result.md)：T12 人工升级与页面确认流程结果，Claude 非作者 Review 已通过。
+- [55-t12-review-by-claude.md](55-t12-review-by-claude.md)：T12 非作者 Review 报告（Claude），结论为通过。
 
 ## 产品澄清引用
 

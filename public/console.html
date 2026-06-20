@@ -63,6 +63,24 @@
         <ul id="packages-list" class="package-list hidden"></ul>
       </section>
 
+      <!-- ── 升级确认 ── -->
+      <section class="console-panel console-panel-wide" aria-labelledby="escalations-title">
+        <div class="panel-header">
+          <h2 id="escalations-title">阻塞与人工确认</h2>
+          <p class="lede">待用户确认的升级项，确认结果会写回结构化记录。</p>
+        </div>
+
+        <div id="escalations-loading" class="empty-state">
+          <p>正在加载待确认项...</p>
+        </div>
+
+        <div id="escalations-empty" class="empty-state hidden">
+          <p>当前没有待确认升级项。</p>
+        </div>
+
+        <div id="escalations-list" class="escalation-list hidden"></div>
+      </section>
+
       <!-- ── 用户录入 ── -->
       <section class="console-panel console-panel-wide" aria-labelledby="input-title">
         <div class="panel-header">

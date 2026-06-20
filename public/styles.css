@@ -394,6 +394,78 @@ dd {
   font-size: 0.9rem;
 }
 
+/* ── 升级确认 ── */
+
+.escalation-list {
+  display: grid;
+  gap: 12px;
+}
+
+.escalation-item {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-muted);
+  padding: 16px;
+}
+
+.escalation-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.escalation-header h3 {
+  margin: 0;
+  font-size: 1rem;
+  letter-spacing: 0;
+}
+
+.escalation-details {
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.escalation-details > div {
+  border-top: 1px solid var(--border);
+  padding-top: 8px;
+}
+
+.escalation-options {
+  margin: 12px 0;
+  font-size: 0.88rem;
+}
+
+.escalation-options span {
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.escalation-options ul {
+  margin: 6px 0 0;
+  padding-left: 20px;
+}
+
+.escalation-decision-form {
+  display: grid;
+  gap: 12px;
+}
+
+.escalation-decision-form textarea {
+  min-height: 96px;
+}
+
+.escalation-status {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.escalation-status.error {
+  color: var(--danger);
+}
+
 /* ── 控制台表单 ── */
 
 .console-form-grid {
