@@ -69,7 +69,7 @@
 | T7 方案与任务拆解流程 | 已完成 | Codex | T3，T5，T6 | [38-t7-solution-task-breakdown-start-package.md](38-t7-solution-task-breakdown-start-package.md) | [40-t7-solution-task-breakdown-result.md](40-t7-solution-task-breakdown-result.md) | [41-t7-review-by-claude.md](41-t7-review-by-claude.md) | `npm run check`、`npm test`、`node src/work-items/solution-breakdown.verify.js`、`node src/work-items/state-machine.verify.js`、`node src/storage/__verify.js`、`node src/storage/__page_query_verify.js` 通过 | 无 | Claude Review 已归档，T7 可关闭。 |
 | T8 Harness 核心护栏 | 未开始 | Codex | T5，T7 | [44-t8-harness-core-rails-start-package.md](44-t8-harness-core-rails-start-package.md) | 待补充 | Claude | 待补充 | 无 | 可启动；必须先做启动前方案确认。 |
 | T9 Review 与质量门禁记录 | 未开始 | Claude | T3，T8 | 待补充 | 待补充 | Codex | 待补充 | 等待 T8 | T8 启动后可准备方案。 |
-| T10 Worktree 与任务隔离最小治理 | 未开始 | Claude | T3，T7 | [45-t10-worktree-isolation-start-package.md](45-t10-worktree-isolation-start-package.md) | 待补充 | Codex | 待补充 | 无 | 可与 T8 并行启动；必须先做启动前方案确认。 |
+| T10 Worktree 与任务隔离最小治理 | 待 Review | Claude | T3，T7 | [45-t10-worktree-isolation-start-package.md](45-t10-worktree-isolation-start-package.md) | [48-t10-worktree-isolation-result.md](48-t10-worktree-isolation-result.md) | Codex | 待补充 | 无 | 已完成实现和自检（42/42 通过），待 Codex Review。 |
 | T11 Git feature 分支交付安全流程 | 未开始 | Codex | T8，T9，T10 | 待补充 | 待补充 | Claude | 待补充 | 等待 T8/T9/T10 | 依赖完成后启动；不得默认合并主干或自动部署。 |
 | T12 人工升级与页面确认流程 | 未开始 | Codex | T5，T8 | 待补充 | 待补充 | Claude | 待补充 | 等待 T5/T8 | T5/T8 完成后启动；页面确认需对齐 P0-14/P0-15/P0-16。 |
 | T13 页面级用户参与主界面最小实现 | 未开始 | MiniMax | T2，T3，T5，T6，T9，T12 | 待补充 | 待补充 | Codex | 待补充 | 等待 T5/T6/T9/T12；A7 待执行 | 启动前必须安排 MiniMax 页面体验职责。 |
