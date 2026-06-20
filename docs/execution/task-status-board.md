@@ -73,6 +73,7 @@
 | T11 Git feature 分支交付安全流程 | 未开始 | Codex | T8，T9，T10 | 待补充 | 待补充 | Claude | 待补充 | 等待 T8/T9/T10 | 依赖完成后启动；不得默认合并主干或自动部署。 |
 | T12 人工升级与页面确认流程 | 未开始 | Codex | T5，T8 | 待补充 | 待补充 | Claude | 待补充 | 等待 T5/T8 | T5/T8 完成后启动；页面确认需对齐 P0-14/P0-15/P0-16。 |
 | T13 页面级用户参与主界面最小实现 | 未开始 | MiniMax | T2，T3，T5，T6，T9，T12 | 待补充 | 待补充 | Codex | 待补充 | 等待 T5/T6/T9/T12；A7 待执行 | 启动前必须安排 MiniMax 页面体验职责。 |
+| T13A Lite 用户操作台最小入口 | 已完成 | Claude | T2，T3，T5，T6 | [39-t13a-lite-user-console-start-package.md](39-t13a-lite-user-console-start-package.md) | [42-t13a-lite-user-console-result.md](42-t13a-lite-user-console-result.md) | [43-t13a-lite-review-by-codex.md](43-t13a-lite-review-by-codex.md)（修复后复核，通过） | `npm run check`、`npm test`、手动 API 验证（docs route 200） | 无 | 已关闭。 |
 | T14 复盘记录最小闭环 | 未开始 | Claude | T3，T6，T9 | 待补充 | 待补充 | Codex | 待补充 | 等待 T6/T9 | T6/T9 完成后启动，可与 T12/T13 并行。 |
 | T15 Dogfooding 评估增强 | 未开始 | Claude | T14 | 待补充 | 待补充 | Codex | 待补充 | 等待 T14 | P1，T14 后视时间箱启动。 |
 | T16 首个端到端样例验证 | 未开始 | Codex | T1-T14；T15 可选 | 待补充 | 待补充 | 非作者双 Review | 待补充 | 等待 T1-T14；A7 必须在 T16 前关闭或记录降级/阻塞 | T1-T14 完成后启动，覆盖成功路径和被门禁阻断的失败路径。 |

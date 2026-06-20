@@ -204,6 +204,259 @@ dd {
   display: none;
 }
 
+/* ── T13A Lite 控制台 ──────────────────────────────────────────────── */
+
+.console-page {
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.console-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 0 4px;
+  font-size: 0.88rem;
+}
+
+.nav-link,
+.nav-current {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.nav-link:hover {
+  text-decoration: underline;
+}
+
+.nav-current {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.nav-current::before {
+  content: "/";
+  margin-right: 10px;
+  color: var(--border);
+}
+
+.console-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+
+.console-panel-wide {
+  grid-column: 1 / -1;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  margin: 12px 0 8px;
+}
+
+.status-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.status-table th,
+.status-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+
+.status-table th {
+  background: var(--surface-muted);
+  font-weight: 700;
+  color: var(--text-muted);
+  position: sticky;
+  top: 0;
+}
+
+.cell-task {
+  white-space: nowrap;
+}
+
+.task-id {
+  font-weight: 700;
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+}
+
+.cell-link {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cell-next {
+  max-width: 260px;
+  font-size: 0.84rem;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 10px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status-done {
+  background: #d4ece4;
+  color: #205f4f;
+}
+
+.status-active {
+  background: #e0e9fa;
+  color: #2449a0;
+}
+
+.status-review {
+  background: #fde9d5;
+  color: #8c5200;
+}
+
+.status-blocked {
+  background: #f9d6d2;
+  color: #a63b32;
+}
+
+.status-pending {
+  background: var(--surface-muted);
+  color: var(--text-muted);
+}
+
+.row-done {
+  opacity: 0.72;
+}
+
+.row-blocked {
+  background: #fef4f2;
+}
+
+.row-active {
+  background: #fdfaf5;
+}
+
+.table-note {
+  margin: 8px 0 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.table-note a {
+  color: var(--accent);
+}
+
+/* ── 启动包列表 ── */
+
+.package-list {
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 6px;
+}
+
+.package-link {
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  text-decoration: none;
+  color: var(--text);
+  background: var(--surface-muted);
+}
+
+.package-link:hover {
+  border-color: var(--accent);
+  background: #eaf3ef;
+}
+
+.package-id {
+  font-weight: 700;
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  color: var(--accent);
+  min-width: 3.5em;
+  font-size: 0.88rem;
+}
+
+.package-title {
+  font-size: 0.9rem;
+}
+
+/* ── 控制台表单 ── */
+
+.console-form-grid {
+  grid-template-columns: 1fr 1fr;
+}
+
+.recent-records {
+  margin-top: 16px;
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+
+.recent-records summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+}
+
+.records-list {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.84rem;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.records-list li {
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  gap: 4px;
+}
+
+.record-ts {
+  color: var(--text-muted);
+  font-size: 0.76rem;
+}
+
+.record-id {
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-size: 0.76rem;
+  color: var(--accent);
+}
+
+.record-text {
+  overflow-wrap: anywhere;
+}
+
+/* ── 入口页导航提示 ── */
+
+.entry-nav-hint {
+  margin-top: 8px;
+  font-size: 0.84rem;
+  color: var(--text-muted);
+}
+
+.entry-nav-hint a {
+  color: var(--accent);
+  font-weight: 600;
+}
+
 @media (min-width: 900px) {
   .page-shell {
     grid-template-columns: minmax(0, 1.3fr) minmax(320px, 0.7fr);
