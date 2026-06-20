@@ -44,9 +44,9 @@
 - [49-t10-review-by-codex.md](49-t10-review-by-codex.md)：T10 非作者 Review 报告（Codex），修复后复核通过。
 - [50-t9-review-quality-gate-start-package.md](50-t9-review-quality-gate-start-package.md)：T9 任务启动包，定义 Review 与质量门禁记录的执行上下文、边界、门禁和交付约束。
 - [51-t12-escalation-page-confirmation-start-package.md](51-t12-escalation-page-confirmation-start-package.md)：T12 任务启动包，定义人工升级与页面确认流程的执行上下文、边界、门禁和交付约束。
-- [52-t9-review-quality-gate-result.md](52-t9-review-quality-gate-result.md)：T9 Review 与质量门禁记录结果，Claude 非作者 Review 待完成。
+- [52-t9-review-quality-gate-result.md](52-t9-review-quality-gate-result.md)：T9 Review 与质量门禁记录结果，Codex 非作者 Review 已通过。
 - [53-t12-start-package-review-by-claude.md](53-t12-start-package-review-by-claude.md)：T12 启动包 Claude 前置审查，结论为需补充后启动。
-- [54-t9-review-by-codex.md](54-t9-review-by-codex.md)：T9 非作者 Review 报告（Codex），结论为未通过，需修复后复核。
+- [54-t9-review-by-codex.md](54-t9-review-by-codex.md)：T9 非作者 Review 报告（Codex），两轮复核通过。
 
 ## 产品澄清引用
 
