@@ -15,6 +15,7 @@ const MIME_TYPES = {
   ".html": "text/html; charset=utf-8",
   ".js": "text/javascript; charset=utf-8",
   ".json": "application/json; charset=utf-8",
+  ".md": "text/plain; charset=utf-8",
 };
 
 function startServer(options = {}) {
@@ -72,6 +73,22 @@ async function handleRequest(request, response, context) {
     const body = await readJsonBody(request);
     const record = saveUserInput(body, context.dataDir);
     sendJson(response, 201, { record });
+    return;
+  }
+
+  // GET /docs/execution/* — 文档/启动包静态分发（T13A Lite 控制台链接可用）
+  if (request.method === "GET" && url.pathname.startsWith("/docs/execution/")) {
+    const relative = url.pathname.replace(/^\/+/, "");
+    const docPath = path.resolve(DOCS_DIR, path.basename(relative));
+    if (!isPathInside(DOCS_DIR, docPath) || !fs.existsSync(docPath)) {
+      sendJson(response, 404, { error: "Document not found." });
+      return;
+    }
+    const ext = path.extname(docPath);
+    response.writeHead(200, {
+      "content-type": MIME_TYPES[ext] || "text/plain; charset=utf-8",
+    });
+    fs.createReadStream(docPath).pipe(response);
     return;
   }
 

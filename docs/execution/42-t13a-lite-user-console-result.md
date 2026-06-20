@@ -1,6 +1,6 @@
 # T13A Lite 用户操作台最小入口结果
 
-> 状态：待 Review
+> 状态：待 Review（Codex Review 修复已完成）
 > 所属：执行
 > 规则效力：T13A Lite 交付记录
 > 维护角色：系统架构师
@@ -74,6 +74,21 @@ npm test               → work-item-entry tests passed
                           GET /api/console/start-packages (3 packages)
                           POST /api/console/user-input (a2a-xxx created)
 ```
+
+## 非作者 Review 后修正
+
+Codex 已完成 T13A Lite 非作者 Review（[43-t13a-lite-review-by-codex.md](43-t13a-lite-review-by-codex.md)），结论为"需修改"。以下 2 项均已修复：
+
+### P1：文档/启动包链接 404
+
+- **问题**：控制台页面和 JS 中的文档链接指向 `/docs/execution/*.md`，但服务器只对 `public/` 做静态分发。
+- **修复**：新增 `GET /docs/execution/*` 路由，在 `isPathInside` 校验后从 `DOCS_DIR` 读取 `.md` 文件，MIME 设为 `text/plain; charset=utf-8`。
+- **验证**：`GET /docs/execution/task-status-board.md` → 200 (6129 bytes)。
+
+### P2：index.html 多余闭合标签
+
+- **问题**：导航提示 `<p>` 放在了 `</section>` 之后，导致多余 `</section>` 闭合标签。
+- **修复**：将导航提示移入 result-panel section 内部。
 
 ## 未完成内容
 
