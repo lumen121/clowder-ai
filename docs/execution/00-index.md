@@ -39,6 +39,7 @@
 - [44-t8-harness-core-rails-start-package.md](44-t8-harness-core-rails-start-package.md)：T8 任务启动包，定义 Harness 核心护栏的执行上下文、边界、门禁和交付约束。
 - [45-t10-worktree-isolation-start-package.md](45-t10-worktree-isolation-start-package.md)：T10 任务启动包，定义 worktree 与任务隔离最小治理的执行上下文、边界、门禁和交付约束。
 - [48-t10-worktree-isolation-result.md](48-t10-worktree-isolation-result.md)：T10 Worktree 与任务隔离最小治理结果，Codex 非作者 Review 待完成。
+- [49-t10-review-by-codex.md](49-t10-review-by-codex.md)：T10 非作者 Review 报告（Codex），修复后复核通过。
 
 ## 产品澄清引用
 

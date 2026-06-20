@@ -1,6 +1,6 @@
 # T10 Worktree 与任务隔离最小治理结果
 
-> 状态：修复完成，待复核
+> 状态：已完成
 > 所属：执行
 > 规则效力：T10 交付记录
 > 维护角色：系统架构师
@@ -17,7 +17,7 @@
 | worktree | `C:\aiWorkspace\clowder-ai-t10` |
 | 基线 | `8dfc0a5`（master，含 T7 完成 + T8/T10 启动包） |
 | Review 方 | Codex |
-| 状态 | 已完成实现和自检，待 Codex Review |
+| 状态 | 已完成实现、自检和 Codex 非作者 Review |
 
 ## 总体结论
 
@@ -29,7 +29,7 @@ T10 已在 T3 WorkspaceRecord 之上实现了任务到 branch/worktree 的绑定
 | --- | --- | --- |
 | `src/storage/index.js` | 修改 | WorkspaceRecord 增加 `base_ref` 字段 |
 | `src/worktree/isolation-governance.js` | **新增** | 核心模块：绑定登记、状态更新、查询、合并前检查 |
-| `src/worktree/isolation-governance.verify.js` | **新增** | 42 项验证 |
+| `src/worktree/isolation-governance.verify.js` | **新增** | 44 项验证 |
 | `src/index.js` | 修改 | 新增 T10 导出 |
 
 ## API 设计
@@ -93,7 +93,7 @@ npm test                                           → work-item-entry + agent-c
 
 ## Codex Review 后修复
 
-Codex 非作者 Review（[49-t10-review-by-codex.md](49-t10-review-by-codex.md)）发现两项 P1 问题，均已修复：
+Codex 非作者 Review（[49-t10-review-by-codex.md](49-t10-review-by-codex.md)）发现两项 P1 问题，均已修复并通过复核：
 
 ### P1-1：分支复用后 `getWorkspaceByBranch` 命中归档记录
 
