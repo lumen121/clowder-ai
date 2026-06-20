@@ -19,6 +19,7 @@ const stateMachine = require("./work-items/state-machine");
 const solutionBreakdown = require("./work-items/solution-breakdown");
 const a2aOrchestrator = require("./a2a/orchestrator");
 const harnessCoreRails = require("./harness/core-rails");
+const escalationFlow = require("./escalations/escalation-flow");
 const isolationGovernance = require("./worktree/isolation-governance");
 const reviewQuality = require("./review-quality");
 
@@ -106,6 +107,18 @@ module.exports = {
   evaluateHighRiskAction:     harnessCoreRails.evaluateHighRiskAction,
   guardedTransitionWorkItem:  harnessCoreRails.guardedTransitionWorkItem,
   harnessCoreRails,
+
+  // ── 人工升级与页面确认（T12）─────────────────────────────────────────
+  createEscalationFromHarnessDecision: escalationFlow.createEscalationFromHarnessDecision,
+  createEscalationForHarnessBlock:     escalationFlow.createEscalationForHarnessBlock,
+  createEscalationForHighRiskAction:   escalationFlow.createEscalationForHighRiskAction,
+  listPendingEscalations:              escalationFlow.listPendingEscalations,
+  getEscalation:                       escalationFlow.getEscalation,
+  recordUserEscalationDecision:        escalationFlow.recordUserEscalationDecision,
+  formatEscalationForPage:             escalationFlow.formatForPage,
+  ESCALATION_STATUSES:                 escalationFlow.ESCALATION_STATUSES,
+  USER_ESCALATION_DECISIONS:           escalationFlow.USER_DECISIONS,
+  escalationFlow,
 
   // ── Worktree 隔离治理（T10）────────────────────────────────────────
   registerWorkspace:          isolationGovernance.registerWorkspace,

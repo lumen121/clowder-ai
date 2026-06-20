@@ -6,6 +6,12 @@ const path = require("path");
 
 const { DEFAULT_DATA_DIR, createAndSaveWorkItem } = require("../work-items/create-work-item");
 const { createPersistence } = require("../storage");
+const {
+  formatForPage,
+  getEscalation,
+  listPendingEscalations,
+  recordUserEscalationDecision,
+} = require("../escalations/escalation-flow");
 
 const PUBLIC_DIR = path.join(__dirname, "..", "..", "public");
 const DOCS_DIR = path.join(__dirname, "..", "..", "docs", "execution");
@@ -36,6 +42,7 @@ function startServer(options = {}) {
 
 async function handleRequest(request, response, context) {
   const url = new URL(request.url, "http://localhost");
+  const persistence = createPersistence(context.dataDir || DEFAULT_DATA_DIR);
 
   if (request.method === "POST" && url.pathname === "/api/work-items") {
     const body = await readJsonBody(request);
@@ -68,10 +75,39 @@ async function handleRequest(request, response, context) {
     return;
   }
 
+  // GET /api/console/escalations — 返回待确认升级项
+  if (request.method === "GET" && url.pathname === "/api/console/escalations") {
+    const workItemId = url.searchParams.get("work_item_id") || "";
+    const records = listPendingEscalations(persistence, { work_item_id: workItemId })
+      .map(formatForPage);
+    sendJson(response, 200, { escalations: records });
+    return;
+  }
+
+  // POST /api/console/escalations/:id/decision — 写入用户确认/拒绝/补充信息
+  const escalationMatch = request.method === "POST"
+    ? url.pathname.match(/^\/api\/console\/escalations\/([^/]+)\/decision$/)
+    : null;
+  if (escalationMatch) {
+    const body = await readJsonBody(request);
+    const record = recordUserEscalationDecision(
+      persistence,
+      decodeURIComponent(escalationMatch[1]),
+      {
+        decision: body.decision,
+        decided_by: body.decided_by || "user",
+        detail: body.detail,
+        next_action: body.next_action,
+      }
+    );
+    sendJson(response, 200, { escalation: formatForPage(record) });
+    return;
+  }
+
   // POST /api/console/user-input — 保存用户补充信息/确认意见
   if (request.method === "POST" && url.pathname === "/api/console/user-input") {
     const body = await readJsonBody(request);
-    const record = saveUserInput(body, context.dataDir);
+    const record = saveUserInput(body, persistence);
     sendJson(response, 201, { record });
     return;
   }
@@ -167,7 +203,12 @@ function isClientError(error) {
     error.message === "Request body must be valid JSON." ||
     error.message === "Request body is too large." ||
     error.message === "Work item request is required." ||
-    error.message.startsWith("Unknown work item type:")
+    error.message.startsWith("Unknown work item type:") ||
+    error.message === "用户输入内容不能为空。" ||
+    error.message.startsWith("decision_detail is required") ||
+    error.message.endsWith("is required.") ||
+    error.message.startsWith("Invalid user decision:") ||
+    error.message.startsWith("EscalationRecord not found:")
   );
 }
 
@@ -292,13 +333,11 @@ function listStartPackages() {
  * @param {string} dataDir - 数据目录
  * @returns {object} 创建的 A2AEvent 记录
  */
-function saveUserInput(body, dataDir) {
+function saveUserInput(body, persistence) {
   const content = String(body.content || "").trim();
   if (!content) {
     throw new Error("用户输入内容不能为空。");
   }
-
-  const persistence = createPersistence(dataDir || DEFAULT_DATA_DIR);
 
   return persistence.createA2AEvent({
     from_agent: "user",
@@ -320,8 +359,12 @@ function saveUserInput(body, dataDir) {
 }
 
 module.exports = {
+  formatForPage,
+  getEscalation,
   handleRequest,
   isPathInside,
+  listPendingEscalations,
+  recordUserEscalationDecision,
   startServer,
   // 导出辅助函数供测试
   readTaskStatusBoard,
