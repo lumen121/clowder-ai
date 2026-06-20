@@ -16,6 +16,7 @@ const agents = require("./agents/cli-adapter");
 const agentRecording = require("./agents/response-recording");
 const taskContext = require("./agents/task-context");
 const stateMachine = require("./work-items/state-machine");
+const solutionBreakdown = require("./work-items/solution-breakdown");
 const a2aOrchestrator = require("./a2a/orchestrator");
 
 module.exports = {
@@ -70,6 +71,12 @@ module.exports = {
 
   // ── 底层模块引用（高级用法）─────────────────────────────────────
   stateMachine,
+
+  // ── 方案与任务拆解（T7）──────────────────────────────────────────
+  recordSolutionAndTaskBreakdown: solutionBreakdown.recordSolutionAndTaskBreakdown,
+  validateSolutionBreakdown:      solutionBreakdown.validateSolutionBreakdown,
+  normalizeBreakdownInput:        solutionBreakdown.normalizeBreakdownInput,
+  solutionBreakdown,
 
   // ── A2A 事件编排（T6）───────────────────────────────────────────────
   // 核心

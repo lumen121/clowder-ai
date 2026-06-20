@@ -25,6 +25,14 @@
 - [30-t4-agent-cli-adapter-result.md](30-t4-agent-cli-adapter-result.md)：T4 Agent CLI 适配与最小调用闭环结果，Claude 非作者 Review 已通过。
 - [31-t4-review-by-claude.md](31-t4-review-by-claude.md)：T4 非作者 Review 报告（Claude），结论为通过。
 - [32-t5-work-item-state-machine-start-package.md](32-t5-work-item-state-machine-start-package.md)：T5 任务启动包，定义工作项状态机的执行上下文、边界、门禁和交付约束。
+- [33-t5-work-item-state-machine-result.md](33-t5-work-item-state-machine-result.md)：T5 工作项状态机结果，Codex 非作者 Review 已通过。
+- [34-t5-review-by-codex.md](34-t5-review-by-codex.md)：T5 非作者 Review 报告（Codex），最终结论为通过。
+- [35-t6-a2a-event-orchestration-start-package.md](35-t6-a2a-event-orchestration-start-package.md)：T6 任务启动包，定义 A2A 事件编排与记录的执行上下文、边界、门禁和交付约束。
+- [36-t6-a2a-event-orchestration-result.md](36-t6-a2a-event-orchestration-result.md)：T6 A2A 事件编排与记录结果，Codex 非作者 Review 已通过。
+- [37-t6-review-by-codex.md](37-t6-review-by-codex.md)：T6 非作者 Review 报告（Codex），三轮复核后通过。
+- [38-t7-solution-task-breakdown-start-package.md](38-t7-solution-task-breakdown-start-package.md)：T7 任务启动包，定义方案记录与任务拆解流程的执行上下文、边界、门禁和交付约束。
+- [40-t7-solution-task-breakdown-result.md](40-t7-solution-task-breakdown-result.md)：T7 方案与任务拆解流程结果，供非作者 Agent Review 及归档参考。
+- [41-t7-review-by-claude.md](41-t7-review-by-claude.md)：T7 非作者 Review 报告（Claude），已完成并归档。
 
 ## 产品澄清引用
 
