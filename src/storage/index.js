@@ -155,6 +155,34 @@ const WORKSPACE_REQUIRED = {
   agent: "agent", task_id: "task_id", branch: "branch",
 };
 
+// ── DeliveryRecord ─────────────────────────────────────────────────
+
+const DELIVERY_ACTIONS = [
+  "prepare_commit", "feature_push",
+];
+
+const DELIVERY_RESULTS = [
+  "passed", "blocked", "failed",
+];
+
+const PUSH_STATUSES = [
+  "not_attempted", "ready", "succeeded", "failed",
+];
+
+const DELIVERY_DEFAULTS = {
+  work_item_id: "", task_id: null, action: "prepare_commit",
+  actor_agent: "", git_identity: "", current_branch: "",
+  target_branch: "", remote: "origin", commit_sha: "",
+  workspace_id: null, result: "blocked", push_status: "not_attempted",
+  blockers: [], gates_checked: [], command: "", failure_summary: "",
+};
+
+const DELIVERY_REQUIRED = {
+  work_item_id: "work_item_id",
+  action: "action",
+  actor_agent: "actor_agent",
+};
+
 // ── EscalationRecord ────────────────────────────────────────────────
 
 const ESCALATION_DEFAULTS = {
@@ -193,6 +221,7 @@ function createPersistence(dataDir = "data") {
   const reviewRecordStore = new Store("review-records", dataDir, { idPrefix: "rev" });
   const qualityGateRunStore = new Store("quality-gate-runs", dataDir, { idPrefix: "qg" });
   const workspaceRecordStore = new Store("workspace-records", dataDir, { idPrefix: "ws" });
+  const deliveryRecordStore = new Store("delivery-records", dataDir, { idPrefix: "del" });
   const escalationRecordStore = new Store("escalation-records", dataDir, { idPrefix: "esc" });
   const retrospectiveMemoryStore = new Store("retrospective-memories", dataDir, { idPrefix: "retro" });
 
@@ -265,6 +294,21 @@ function createPersistence(dataDir = "data") {
     return modelFactory(workspaceRecordStore, WORKSPACE_DEFAULTS, WORKSPACE_REQUIRED)(input);
   }
 
+  // ── DeliveryRecord 工厂 ─────────────────────────────────────────
+
+  function createDeliveryRecord(input = {}) {
+    if (input.action && !DELIVERY_ACTIONS.includes(input.action)) {
+      throw new Error(`无效的交付动作: "${input.action}"`);
+    }
+    if (input.result && !DELIVERY_RESULTS.includes(input.result)) {
+      throw new Error(`无效的交付检查结果: "${input.result}"`);
+    }
+    if (input.push_status && !PUSH_STATUSES.includes(input.push_status)) {
+      throw new Error(`无效的推送状态: "${input.push_status}"`);
+    }
+    return modelFactory(deliveryRecordStore, DELIVERY_DEFAULTS, DELIVERY_REQUIRED)(input);
+  }
+
   // ── EscalationRecord 工厂 ───────────────────────────────────────
 
   function createEscalationRecord(input = {}) {
@@ -281,10 +325,10 @@ function createPersistence(dataDir = "data") {
 
   return {
     workItemStore, taskStore, a2aEventStore, reviewRecordStore,
-    qualityGateRunStore, workspaceRecordStore, escalationRecordStore,
+    qualityGateRunStore, workspaceRecordStore, deliveryRecordStore, escalationRecordStore,
     retrospectiveMemoryStore,
     createWorkItem, createTask, createA2AEvent, createReviewRecord,
-    createQualityGateRun, createWorkspaceRecord, createEscalationRecord,
+    createQualityGateRun, createWorkspaceRecord, createDeliveryRecord, createEscalationRecord,
     createRetrospectiveMemory,
   };
 }
@@ -309,4 +353,5 @@ module.exports = {
   // 常量
   WORK_ITEM_TYPES, WORK_ITEM_STATUSES, TASK_STATUSES,
   A2A_PURPOSES, REVIEW_RESULTS, QG_FINAL_STATUSES, WS_CONFLICT_STATUSES,
+  DELIVERY_ACTIONS, DELIVERY_RESULTS, PUSH_STATUSES,
 };

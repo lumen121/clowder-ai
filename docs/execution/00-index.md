@@ -52,6 +52,8 @@
 - [56-t11-git-delivery-safety-start-package.md](56-t11-git-delivery-safety-start-package.md)：T11 任务启动包，定义 Git feature 分支交付安全流程的执行上下文、边界、门禁和交付约束。
 - [57-t13-user-participation-main-ui-start-package.md](57-t13-user-participation-main-ui-start-package.md)：T13 任务启动包，定义页面级用户参与主界面最小实现的执行上下文、边界、门禁和交付约束。
 - [58-t14-retrospective-loop-start-package.md](58-t14-retrospective-loop-start-package.md)：T14 任务启动包，定义复盘记录最小闭环的执行上下文、边界、门禁和交付约束。
+- [59-t11-git-delivery-safety-result.md](59-t11-git-delivery-safety-result.md)：T11 Git feature 分支交付安全流程结果，Claude 非作者 Review 已通过。
+- [60-t11-review-by-claude.md](60-t11-review-by-claude.md)：T11 非作者 Review 报告（Claude），结论为通过。
 
 ## 产品澄清引用
 

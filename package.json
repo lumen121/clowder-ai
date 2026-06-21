@@ -9,6 +9,7 @@
     "page": "node bin/clowder-page.js",
     "test": "node test/work-item-entry.test.js && node test/agent-cli-adapter.test.js",
     "verify:harness": "node src/harness/core-rails.verify.js",
+    "verify:delivery": "node src/git-delivery/delivery-safety.verify.js",
     "verify:escalations": "node src/escalations/escalation-flow.verify.js",
     "verify:agents": "node scripts/verify-agent-cli.js"
   },

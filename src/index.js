@@ -22,6 +22,7 @@ const harnessCoreRails = require("./harness/core-rails");
 const escalationFlow = require("./escalations/escalation-flow");
 const isolationGovernance = require("./worktree/isolation-governance");
 const reviewQuality = require("./review-quality");
+const gitDelivery = require("./git-delivery/delivery-safety");
 
 module.exports = {
   // ── Store 实例（底层 CRUD：read / update / delete / list / count）──
@@ -31,6 +32,7 @@ module.exports = {
   reviewRecordStore:        storage.reviewRecordStore,
   qualityGateRunStore:      storage.qualityGateRunStore,
   workspaceRecordStore:     storage.workspaceRecordStore,
+  deliveryRecordStore:      storage.deliveryRecordStore,
   escalationRecordStore:    storage.escalationRecordStore,
   retrospectiveMemoryStore: storage.retrospectiveMemoryStore,
 
@@ -41,6 +43,7 @@ module.exports = {
   createReviewRecord:        storage.createReviewRecord,
   createQualityGateRun:      storage.createQualityGateRun,
   createWorkspaceRecord:     storage.createWorkspaceRecord,
+  createDeliveryRecord:      storage.createDeliveryRecord,
   createEscalationRecord:    storage.createEscalationRecord,
   createRetrospectiveMemory: storage.createRetrospectiveMemory,
 
@@ -52,6 +55,9 @@ module.exports = {
   REVIEW_RESULTS:            storage.REVIEW_RESULTS,
   QG_FINAL_STATUSES:         storage.QG_FINAL_STATUSES,
   WS_CONFLICT_STATUSES:      storage.WS_CONFLICT_STATUSES,
+  DELIVERY_ACTIONS:          storage.DELIVERY_ACTIONS,
+  DELIVERY_RESULTS:          storage.DELIVERY_RESULTS,
+  PUSH_STATUSES:             storage.PUSH_STATUSES,
 
   // ── 可注入 dataDir 的工厂（测试/验证用）─────────────────────────
   createPersistence:         storage.createPersistence,
@@ -146,4 +152,14 @@ module.exports = {
   queryQualityGates:          reviewQuality.queryQualityGates,
   summarizeQualityGates:      reviewQuality.summarizeQualityGates,
   reviewQuality,
+
+  // ── Git 交付安全流程（T11）──────────────────────────────────────
+  evaluateDeliveryReadiness: gitDelivery.evaluateDeliveryReadiness,
+  recordDeliveryCheck:       gitDelivery.recordDeliveryCheck,
+  recordFeaturePushResult:   gitDelivery.recordFeaturePushResult,
+  getDeliveryRecords:        gitDelivery.getDeliveryRecords,
+  summarizeDelivery:         gitDelivery.summarizeDelivery,
+  expectedGitIdentity:       gitDelivery.expectedGitIdentity,
+  isMainBranch:              gitDelivery.isMainBranch,
+  gitDelivery,
 };
