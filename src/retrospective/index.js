@@ -91,21 +91,17 @@ function aggregateFacts(persistence, workItemId) {
       (e) => e.work_item_id === workItemId
     )
   );
-  const participatingAgents = collectAgents(allA2A, ["from_agent", "to_agent"]);
-  // 同时从 WorkItem 的 tasks 中收集 owner_agent（如果有）
-  // 注意：Task 记录需要从 taskStore 读取
+  const a2aInteractionCount = allA2A.length;
+  const manualInterventionCount = allA2A.filter(
+    (e) => e.requires_user_intervention === true
+  ).length;
+
+  // ── Task ──────────────────────────────────────────────────────────
   const allTasks = clone(
     persistence.taskStore.list().filter(
       (t) => t.work_item_id === workItemId
     )
   );
-  const taskAgents = collectAgents(allTasks, ["owner_agent"]);
-  const mergedAgents = [...new Set([...participatingAgents, ...taskAgents])].sort();
-
-  const a2aInteractionCount = allA2A.length;
-  const manualInterventionCount = allA2A.filter(
-    (e) => e.requires_user_intervention === true
-  ).length;
 
   // ── ReviewRecord ──────────────────────────────────────────────────
   const allReviews = clone(
@@ -119,12 +115,27 @@ function aggregateFacts(persistence, workItemId) {
     (r) => r.result === "changes_requested"
   ).length;
   // Review 发现：收集所有非空 findings
+  // 支持两种形态：
+  //   - string findings → 直接纳入（trim 后）
+  //   - object findings → 保留 { severity, description } 结构化对象
+  // T9 允许结构化 findings（severity/description），T14 不得丢弃
   const reviewFindings = [];
   for (const r of allReviews) {
     if (r.findings && r.findings.length > 0) {
       for (const f of r.findings) {
-        if (f && typeof f === "string" && f.trim()) {
-          reviewFindings.push(f.trim());
+        if (!f) continue;
+        if (typeof f === "string") {
+          const trimmed = f.trim();
+          if (trimmed) reviewFindings.push(trimmed);
+        } else if (typeof f === "object") {
+          // 至少保留 description；severity 存在则一并保留
+          const desc = (f.description || "").trim();
+          if (!desc) continue;
+          const entry = { description: desc };
+          if (f.severity && typeof f.severity === "string" && f.severity.trim()) {
+            entry.severity = f.severity.trim();
+          }
+          reviewFindings.push(entry);
         }
       }
     }
@@ -177,6 +188,24 @@ function aggregateFacts(persistence, workItemId) {
     }
   }
 
+  // ── 参与 Agent 聚合 ──────────────────────────────────────────────
+  // 从 A2A / Task / ReviewRecord 三类来源收集所有参与 Agent
+  // 避免出现"有 Review 但无参与 Agent"的不一致
+  const a2aAgents = collectAgents(allA2A, ["from_agent", "to_agent"]);
+  const taskAgents = collectAgents(allTasks, ["owner_agent", "reviewer_agent"]);
+  // Task.collaborators 是数组，需展平收集
+  for (const t of allTasks) {
+    if (t.collaborators && Array.isArray(t.collaborators)) {
+      for (const c of t.collaborators) {
+        if (c && typeof c === "string" && c.trim()) {
+          taskAgents.push(c.trim());
+        }
+      }
+    }
+  }
+  const reviewAgents = collectAgents(allReviews, ["author_agent", "reviewer_agent"]);
+  const mergedAgents = [...new Set([...a2aAgents, ...taskAgents, ...reviewAgents])].sort();
+
   // ── 聚合事实对象 ─────────────────────────────────────────────────
   const aggregatedFacts = {
     work_item_type: workItem.type || "",
@@ -226,12 +255,35 @@ function aggregateFacts(persistence, workItemId) {
  * @param {string[]} [input.effective_patterns] - 有效做法
  * @returns {object} 完整的 RetrospectiveMemory 记录
  */
+// 允许生成复盘的工作项终态/失败态
+// needs_clarification/in_development/pending_review 等中间态不应默认生成复盘
+const RETROSPECTIVE_ALLOWED_STATUSES = Object.freeze([
+  "completed",
+  "blocked",
+]);
+
 function generateRetrospective(persistence, workItemId, input = {}) {
   if (!workItemId || typeof workItemId !== "string" || !workItemId.trim()) {
     throw new Error("generateRetrospective: work_item_id 不能为空");
   }
 
-  // 1) 聚合事实
+  // 1) 状态门禁：默认只允许终态或失败态生成复盘
+  const workItem = persistence.workItemStore.read(workItemId);
+  if (!workItem) {
+    throw new Error(
+      `generateRetrospective: 未找到工作项 "${workItemId}"`
+    );
+  }
+  const allowNonFinal = input.allow_non_final === true;
+  if (!allowNonFinal && !RETROSPECTIVE_ALLOWED_STATUSES.includes(workItem.status)) {
+    throw new Error(
+      `generateRetrospective: 工作项状态 "${workItem.status}" 不允许生成复盘。` +
+      `仅允许: ${RETROSPECTIVE_ALLOWED_STATUSES.join(", ")}。` +
+      `如需中途复盘请设置 allow_non_final: true。`
+    );
+  }
+
+  // 2) 聚合事实
   const facts = aggregateFacts(persistence, workItemId);
 
   // 2) 合并 input 中的结论和建议（事实不可覆写）
@@ -461,6 +513,7 @@ function summarizeRetrospective(persistence, workItemId) {
 // ═══════════════════════════════════════════════════════════════════════════
 
 module.exports = {
+  RETROSPECTIVE_ALLOWED_STATUSES,
   aggregateFacts,
   generateRetrospective,
   updateRetrospective,

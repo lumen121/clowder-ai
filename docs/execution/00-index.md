@@ -55,7 +55,9 @@
 - [58-t14-retrospective-loop-start-package.md](58-t14-retrospective-loop-start-package.md)：T14 任务启动包，定义复盘记录最小闭环的执行上下文、边界、门禁和交付约束。
 - [59-t11-git-delivery-safety-result.md](59-t11-git-delivery-safety-result.md)：T11 Git feature 分支交付安全流程结果，Claude 非作者 Review 已通过。
 - [60-t11-review-by-claude.md](60-t11-review-by-claude.md)：T11 非作者 Review 报告（Claude），结论为通过。
+- [62-t13-review-by-codex.md](62-t13-review-by-codex.md)：T13 Codex 可审性记录，结论为完整 T13 尚无可 Review 产物。
 - [63-t14-retrospective-loop-result.md](63-t14-retrospective-loop-result.md)：T14 复盘记录最小闭环结果，Codex 修复后复核通过。
+- [64-t14-review-by-codex.md](64-t14-review-by-codex.md)：T14 Codex 非作者 Review，修复后复核通过。
 
 ## 产品澄清引用
 

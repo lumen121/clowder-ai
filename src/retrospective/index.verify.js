@@ -75,11 +75,13 @@ function assertThrows(fn, label) {
 // 准备测试数据
 // ═══════════════════════════════════════════════════════════════════════════
 
-const wi = p.createWorkItem({ goal: "实现用户登录功能", type: "feature" });
-const wi2 = p.createWorkItem({ goal: "修复页面崩溃 Bug", type: "bug_fix" });
+const wi = p.createWorkItem({ goal: "实现用户登录功能", type: "feature", status: "completed" });
+const wi2 = p.createWorkItem({ goal: "修复页面崩溃 Bug", type: "bug_fix", status: "blocked" });
+// wi3: 中间态工作项，用于验证状态门禁
+const wi3 = p.createWorkItem({ goal: "中间态工作项", type: "feature", status: "needs_clarification" });
 
-// Tasks
-const t1 = p.createTask({ work_item_id: wi.id, owner_agent: "Claude", reviewer_agent: "Codex" });
+// Tasks（含 collaborator 用于 P2-1 验证）
+const t1 = p.createTask({ work_item_id: wi.id, owner_agent: "Claude", reviewer_agent: "Codex", collaborators: ["MiniMax"] });
 const t2 = p.createTask({ work_item_id: wi.id, owner_agent: "Codex", reviewer_agent: "Claude" });
 
 // A2AEvents
@@ -97,7 +99,7 @@ p.createA2AEvent({
   requires_user_intervention: true,
 });
 
-// ReviewRecords
+// ReviewRecords（含结构化对象 findings 用于 P1-1 验证）
 p.createReviewRecord({
   work_item_id: wi.id, author_agent: "Claude", reviewer_agent: "Codex",
   result: "changes_requested", findings: ["变量命名不规范", "缺少错误处理"],
@@ -105,6 +107,15 @@ p.createReviewRecord({
 p.createReviewRecord({
   work_item_id: wi.id, author_agent: "Claude", reviewer_agent: "Codex",
   result: "approved", findings: [],
+});
+// 结构化对象 findings（P1-1：T9 已支持此形态）
+p.createReviewRecord({
+  work_item_id: wi.id, author_agent: "MiniMax", reviewer_agent: "Claude",
+  result: "changes_requested",
+  findings: [
+    { severity: "P0", description: "复盘不应在中间状态生成" },
+    { severity: "P1", description: "结构化 findings 被丢弃" },
+  ],
 });
 
 // QualityGateRuns
@@ -142,7 +153,7 @@ console.log("1. aggregateFacts — 基本聚合");
 {
   const facts = aggregateFacts(p, wi.id);
 
-  // 参与 Agent：从 A2A 和 Task 中收集
+  // 参与 Agent：从 A2A、Task、ReviewRecord 中收集（P2-1 修复验证）
   assert(
     facts.participating_agents.includes("Claude"),
     "1.1 参与 Agent 包含 Claude"
@@ -151,17 +162,26 @@ console.log("1. aggregateFacts — 基本聚合");
     facts.participating_agents.includes("Codex"),
     "1.2 参与 Agent 包含 Codex"
   );
-  assertEq(facts.participating_agents.length >= 2, true, "1.3 至少 2 个参与 Agent");
+  assert(
+    facts.participating_agents.includes("MiniMax"),
+    "1.3 参与 Agent 包含 MiniMax（来自 ReviewRecord + Task.collaborators）"
+  );
 
   // 返工次数：result=changes_requested 的 Review 数量
-  assertEq(facts.rework_count, 1, "1.4 返工次数=1（1 条 changes_requested）");
+  assertEq(facts.rework_count, 2, "1.4 返工次数=2（2 条 changes_requested）");
 
-  // Review 发现
-  assertEq(facts.review_findings.length, 2, "1.5 Review 发现 2 条");
+  // Review 发现（P1-1 修复验证：字符串 findings + 对象 findings）
+  assertEq(facts.review_findings.length, 4, "1.5 Review 发现 4 条（2 字符串 + 2 对象）");
   assert(
     facts.review_findings.includes("变量命名不规范"),
-    "1.6 发现包含'变量命名不规范'"
+    "1.6 发现包含'变量命名不规范'（字符串）"
   );
+  // 验证对象 findings 被保留为结构化对象
+  const objFindings = facts.review_findings.filter((f) => typeof f === "object");
+  assertEq(objFindings.length >= 1, true, "1.6a 对象 findings 至少 1 条");
+  const p0Finding = objFindings.find((f) => f.severity === "P0");
+  assert(p0Finding !== undefined, "1.6b 对象 finding 保留 severity=P0");
+  assertEq(p0Finding.description, "复盘不应在中间状态生成", "1.6c 对象 finding 保留 description");
 
   // 质量门禁结果
   assertEq(facts.quality_gate_results.length, 2, "1.7 质量门禁结果 2 条");
@@ -179,10 +199,10 @@ console.log("1. aggregateFacts — 基本聚合");
 
   // 聚合事实对象
   assertEq(facts.aggregated_facts.work_item_type, "feature", "1.13 工作项类型=feature");
-  assertEq(facts.aggregated_facts.final_status, "needs_clarification", "1.14 最终状态");
+  assertEq(facts.aggregated_facts.final_status, "completed", "1.14 最终状态=completed");
   assertEq(facts.aggregated_facts.a2a_interaction_count, 3, "1.15 A2A 交互次数=3");
   assertEq(facts.aggregated_facts.manual_intervention_count, 1, "1.16 人工介入次数=1");
-  assertEq(facts.aggregated_facts.review_count, 2, "1.17 Review 数量=2");
+  assertEq(facts.aggregated_facts.review_count, 3, "1.17 Review 数量=3");
   assertEq(facts.aggregated_facts.quality_gate_count, 2, "1.18 质量门禁数量=2");
   assertEq(facts.aggregated_facts.escalation_count, 2, "1.19 升级数量=2");
   assertEq(facts.aggregated_facts.task_count, 2, "1.20 Task 数量=2");
@@ -263,9 +283,9 @@ console.log("\n4. generateRetrospective — 基本生成");
   );
 
   // 事实已自动聚合
-  assertEq(retro.rework_count, 1, "4.7 事实：返工次数=1");
-  assert(retro.participating_agents.length >= 2, "4.8 事实：参与 Agent 已聚合");
-  assertEq(retro.review_findings.length, 2, "4.9 事实：Review 发现已聚合");
+  assertEq(retro.rework_count, 2, "4.7 事实：返工次数=2");
+  assert(retro.participating_agents.length >= 3, "4.8 事实：参与 Agent 已聚合（含 MiniMax）");
+  assertEq(retro.review_findings.length, 4, "4.9 事实：Review 发现已聚合（含对象 findings）");
   assertEq(retro.escalation_results.length, 2, "4.10 事实：升级结果已聚合");
   assertEq(retro.aggregated_facts.work_item_type, "feature", "4.11 事实：聚合对象已写入");
 
@@ -287,7 +307,7 @@ console.log("\n5. generateRetrospective — input 不可覆写事实");
   });
 
   // 事实以 aggregateFacts 为准，不被 input 覆写
-  assertEq(retro.rework_count, 1, "5.1 rework_count 未被覆写（仍为聚合值）");
+  assertEq(retro.rework_count, 2, "5.1 rework_count 未被覆写（仍为聚合值=2）");
   assert(
     !retro.participating_agents.includes("fake-agent"),
     "5.2 participating_agents 未被覆写"
@@ -331,6 +351,68 @@ console.log("\n7. generateRetrospective — 错误处理");
     () => generateRetrospective(p, "no-such-id"),
     "7.3 不存在的工作项拒绝（底层 aggregateFacts 抛错）"
   );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 7a. generateRetrospective — 状态门禁（P1-2 修复验证）
+// ═══════════════════════════════════════════════════════════════════════════
+
+console.log("\n7a. generateRetrospective — 状态门禁");
+
+{
+  // needs_clarification 中间态应拒绝
+  assertThrows(
+    () => generateRetrospective(p, wi3.id, {}),
+    "7a.1 needs_clarification 中间态拒绝生成复盘"
+  );
+
+  // 设置 in_development 也应拒绝
+  p.workItemStore.update(wi3.id, { status: "in_development" });
+  assertThrows(
+    () => generateRetrospective(p, wi3.id, {}),
+    "7a.2 in_development 中间态拒绝生成复盘"
+  );
+
+  // pending_review 也应拒绝
+  p.workItemStore.update(wi3.id, { status: "pending_review" });
+  assertThrows(
+    () => generateRetrospective(p, wi3.id, {}),
+    "7a.3 pending_review 中间态拒绝生成复盘"
+  );
+
+  // allow_non_final: true 应放行中间态
+  const retro = generateRetrospective(p, wi3.id, { allow_non_final: true });
+  assert(retro.id && retro.id.startsWith("retro-"), "7a.4 allow_non_final=true 放行中间态复盘");
+  assertEq(retro.aggregated_facts.final_status, "pending_review", "7a.5 非最终复盘标记了原始状态");
+
+  // completed 应正常生成
+  p.workItemStore.update(wi3.id, { status: "completed" });
+  const retro2 = generateRetrospective(p, wi3.id, {});
+  assert(retro2.id && retro2.id.startsWith("retro-"), "7a.6 completed 态正常生成复盘");
+
+  // blocked 应正常生成
+  const blockedWi = p.createWorkItem({ goal: "阻塞的工作项", type: "bug_fix", status: "blocked" });
+  const retro3 = generateRetrospective(p, blockedWi.id, {});
+  assert(retro3.id && retro3.id.startsWith("retro-"), "7a.7 blocked 态正常生成复盘");
+
+  // 错误消息应包含合法状态列表
+  const freshWi = p.createWorkItem({ goal: "新工作项", type: "feature", status: "needs_clarification" });
+  try {
+    generateRetrospective(p, freshWi.id, {});
+    failed++;
+    console.error("  FAIL: 7a.8 应抛出错误");
+  } catch (e) {
+    passed++;
+    const msg = e.message;
+    assert(
+      msg.includes("completed") && msg.includes("blocked"),
+      "7a.8 错误消息包含合法状态列表（completed, blocked）"
+    );
+    assert(
+      msg.includes("allow_non_final"),
+      "7a.9 错误消息提示 allow_non_final 选项"
+    );
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -531,7 +613,7 @@ console.log("\n13. summarizeRetrospective — 页面摘要");
 
 {
   // 先清理旧记录，生成一条干净的用于摘要测试
-  const testWi = p.createWorkItem({ goal: "摘要测试工作项", type: "feature" });
+  const testWi = p.createWorkItem({ goal: "摘要测试工作项", type: "feature", status: "completed" });
   const retro = generateRetrospective(p, testWi.id, {
     retrospective_conclusion: "测试结论：一切顺利",
     process_improvement_suggestions: ["改进A"],
