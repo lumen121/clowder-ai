@@ -62,6 +62,7 @@
 - [67-t13-functional-fallback-result.md](67-t13-functional-fallback-result.md)：T13F 页面级用户参与主界面功能骨架降级实现结果，待 Claude 非作者 Review。
 - [71-t16-e2e-validation-start-package.md](71-t16-e2e-validation-start-package.md)：T16 任务启动包，定义首个端到端样例验证的执行上下文、边界、门禁和交付约束。
 - [72-t16-e2e-validation-result.md](72-t16-e2e-validation-result.md)：T16 首个端到端样例验证结果，覆盖成功路径和质量门禁阻断失败路径，待 Claude 非作者 Review。
+- [73-t17-agent-chatroom-start-package.md](73-t17-agent-chatroom-start-package.md)：T17 任务启动包，定义 Agent 聊天室交互闭环纠偏的执行上下文、边界、门禁和交付约束。
 
 ## 产品澄清引用
 
@@ -70,7 +71,7 @@
 
 ## 使用规则
 
-- T1-T16 的任务级进度优先查看 [task-status-board.md](task-status-board.md)。
+- T1-T16 及后续 P0 纠偏任务的任务级进度优先查看 [task-status-board.md](task-status-board.md)。
 - 当前开放事项和执行状态优先查看 [current-action-tracker.md](current-action-tracker.md)；复盘文档只记录历史事实，不维护实时进度。
 - 后续执行 Agent 启动任务前必须读取任务状态板、当前执行状态看板、执行计划和任务启动包模板。
 - 进入实现阶段后，必须从 `T1 实现基线确认` 开始。

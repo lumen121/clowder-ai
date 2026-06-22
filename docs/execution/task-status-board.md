@@ -2,15 +2,15 @@
 
 > 状态：当前基线
 > 所属：执行
-> 规则效力：T1-T16 任务级状态、证据和下一步的当前跟踪入口
+> 规则效力：T1-T16 及后续 P0 纠偏任务的任务级状态、证据和下一步的当前跟踪入口
 > 维护角色：执行 Agent 更新任务状态；系统架构师维护任务结构；产品负责人维护状态口径和验收规则
 
 ## 目的
 
-本文件用于跟踪实现计划中 T1-T16 的任务级状态。它不替代 [15-implementation-plan.md](15-implementation-plan.md)，也不改写任务范围、依赖或验收标准。
+本文件用于跟踪实现计划中 T1-T16 及后续 P0 纠偏任务的任务级状态。它不替代 [15-implementation-plan.md](15-implementation-plan.md)，也不改写任务范围、依赖或验收标准。
 
 - [15-implementation-plan.md](15-implementation-plan.md)：执行计划基线，说明任务拆解、依赖、Owner 建议、验收和 Review 方。
-- [task-status-board.md](task-status-board.md)：T1-T16 当前状态、证据和下一步。
+- [task-status-board.md](task-status-board.md)：T1-T16 及后续 P0 纠偏任务的当前状态、证据和下一步。
 - [current-action-tracker.md](current-action-tracker.md)：临时开放事项、阻塞、补录、确认项。
 
 ## 维护规则
@@ -77,6 +77,7 @@
 | T14 复盘记录最小闭环 | 已完成 | Claude | T3，T6，T9 | [58-t14-retrospective-loop-start-package.md](58-t14-retrospective-loop-start-package.md) | [63-t14-retrospective-loop-result.md](63-t14-retrospective-loop-result.md) | [64-t14-review-by-codex.md](64-t14-review-by-codex.md)（修复后复核通过） | `node src/retrospective/index.verify.js`（133/133）、`npm run check`（40 files）、`npm test`、`npm run verify:harness`（22/22）、`node src/storage/__verify.js`（42/42）、`node src/storage/__page_query_verify.js`（15/15）、`node src/review-quality/index.verify.js`（132/132）零回归 | 无 | 已关闭；T15/T16 对 T14 的依赖可解除。 |
 | T15 Dogfooding 评估增强 | 已完成（Codex 复核降级） | Claude | T14 | [65-t15-dogfooding-evaluation-start-package.md](65-t15-dogfooding-evaluation-start-package.md) | [69-t15-dogfooding-evaluation-result.md](69-t15-dogfooding-evaluation-result.md) | [70-t15-review-by-codex.md](70-t15-review-by-codex.md)（P1/P2/P3 已修复；Codex 复核降级 — A8，自动化验证 150/150 零回归） | `npm run verify:dogfooding`（150/150）、`npm run check`（43 files）、`npm test`、`npm run verify:harness`（22/22）零回归 | Codex 不可用（A8）；Codex 复核降级 | 已关闭；T15 为 P1，不阻塞 T16。 |
 | T16 首个端到端样例验证 | 已完成 | Codex | T1-T14；T15 可选；开发冲刺期间 MiniMax 不阻塞启动 | [71-t16-e2e-validation-start-package.md](71-t16-e2e-validation-start-package.md) | [72-t16-e2e-validation-result.md](72-t16-e2e-validation-result.md)（branch: codex/t13f-t16-e2e, commit `b6d0ab0`） | [68-t13f-t16-review-by-claude.md](68-t13f-t16-review-by-claude.md)（通过；4 项观察不阻塞） | `npm run verify:e2e`（15/15）、全量回归零失败 | A7（MiniMax 体验 Review）降级 | T16 已关闭；首版治理闭环（T1-T16）开发冲刺完成。 |
+| T17 Agent 聊天室交互闭环纠偏 | 未开始 | Codex | T3, T4, T6, T9, T12, T13F, T16；A9 已打开 | [73-t17-agent-chatroom-start-package.md](73-t17-agent-chatroom-start-package.md) | 待产出：`74-t17-agent-chatroom-result.md` | Claude，待产出：`75-t17-review-by-claude.md` | 待执行：`npm run check`、`npm test`、`npm run verify:page`、`node src/a2a/__verify.js`、聊天室专项验证 | MiniMax 开发期不参与；不得伪造 Agent 回复 | 下一步启动 Codex 执行 T17；完成后关闭 A9。 |
 
 ## Agent 同步规则
 
