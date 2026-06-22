@@ -24,6 +24,7 @@ const isolationGovernance = require("./worktree/isolation-governance");
 const reviewQuality = require("./review-quality");
 const gitDelivery = require("./git-delivery/delivery-safety");
 const retrospective = require("./retrospective");
+const dogfooding = require("./dogfooding");
 
 module.exports = {
   // ── Store 实例（底层 CRUD：read / update / delete / list / count）──
@@ -171,4 +172,10 @@ module.exports = {
   queryRetrospectives:       retrospective.queryRetrospectives,
   summarizeRetrospective:    retrospective.summarizeRetrospective,
   retrospective,
+
+  // ── Dogfooding 评估增强（T15）──────────────────────────────────────
+  evaluateMetrics:           dogfooding.evaluateMetrics,
+  summarizeEvaluation:       dogfooding.summarizeEvaluation,
+  queryEvaluations:          dogfooding.queryEvaluations,
+  dogfooding,
 };
