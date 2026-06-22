@@ -76,7 +76,7 @@
 | T13A Lite 用户操作台最小入口 | 已完成 | Claude | T2，T3，T5，T6 | [39-t13a-lite-user-console-start-package.md](39-t13a-lite-user-console-start-package.md) | [42-t13a-lite-user-console-result.md](42-t13a-lite-user-console-result.md) | [43-t13a-lite-review-by-codex.md](43-t13a-lite-review-by-codex.md)（修复后复核，通过） | `npm run check`、`npm test`、手动 API 验证（docs route 200） | 无 | 已关闭。 |
 | T14 复盘记录最小闭环 | 已完成 | Claude | T3，T6，T9 | [58-t14-retrospective-loop-start-package.md](58-t14-retrospective-loop-start-package.md) | [63-t14-retrospective-loop-result.md](63-t14-retrospective-loop-result.md) | [64-t14-review-by-codex.md](64-t14-review-by-codex.md)（修复后复核通过） | `node src/retrospective/index.verify.js`（133/133）、`npm run check`（40 files）、`npm test`、`npm run verify:harness`（22/22）、`node src/storage/__verify.js`（42/42）、`node src/storage/__page_query_verify.js`（15/15）、`node src/review-quality/index.verify.js`（132/132）零回归 | 无 | 已关闭；T15/T16 对 T14 的依赖可解除。 |
 | T15 Dogfooding 评估增强 | 未开始 | Claude | T14 | [65-t15-dogfooding-evaluation-start-package.md](65-t15-dogfooding-evaluation-start-package.md) | 待补充 | Codex | 待补充 | 无 | 可与 T13F 并行启动；P1，不阻塞 T16。 |
-| T16 首个端到端样例验证 | 未开始 | Codex | T1-T14；T15 可选 | 待补充 | 待补充 | 非作者双 Review | 待补充 | 等待 T13 完整验收或明确降级；A7 未关闭 | T13F 只能降低页面功能风险，不能单独解锁完整 T16。 |
+| T16 首个端到端样例验证 | 未开始 | Codex | T1-T14；T15 可选；开发冲刺期间 MiniMax 不阻塞启动 | [71-t16-e2e-validation-start-package.md](71-t16-e2e-validation-start-package.md) | 待补充 | Claude | 待补充 | 无启动阻塞；MiniMax 体验 Review 作为降级风险记录 | 可启动；目标是尽快跑通完整开发闭环，结果必须记录 MiniMax 暂不参与的风险。 |
 
 ## Agent 同步规则
 

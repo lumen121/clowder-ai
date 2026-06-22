@@ -59,6 +59,7 @@
 - [64-t14-review-by-codex.md](64-t14-review-by-codex.md)：T14 Codex 非作者 Review，修复后复核通过。
 - [65-t15-dogfooding-evaluation-start-package.md](65-t15-dogfooding-evaluation-start-package.md)：T15 任务启动包，定义 Dogfooding 评估增强的执行上下文、边界、门禁和交付约束。
 - [66-t13-functional-fallback-start-package.md](66-t13-functional-fallback-start-package.md)：T13F 任务启动包，定义 MiniMax 不可用期间页面级用户参与主界面功能骨架的降级执行上下文。
+- [71-t16-e2e-validation-start-package.md](71-t16-e2e-validation-start-package.md)：T16 任务启动包，定义首个端到端样例验证的执行上下文、边界、门禁和交付约束。
 
 ## 产品澄清引用
 
