@@ -12,7 +12,9 @@
     "verify:delivery": "node src/git-delivery/delivery-safety.verify.js",
     "verify:escalations": "node src/escalations/escalation-flow.verify.js",
     "verify:agents": "node scripts/verify-agent-cli.js",
-    "verify:dogfooding": "node src/dogfooding/index.verify.js"
+    "verify:dogfooding": "node src/dogfooding/index.verify.js",
+    "verify:page": "node src/server/user-participation-view.verify.js",
+    "verify:e2e": "node src/e2e/t16-e2e-validation.verify.js"
   },
   "bin": {
     "clowder-agent": "bin/clowder-agent.js",
