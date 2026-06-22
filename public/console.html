@@ -3,133 +3,180 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Clowder AI 操作台 (Lite)</title>
+    <title>Clowder AI 用户参与操作台</title>
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
-    <main class="page-shell console-page">
-      <!-- ── 导航 ── -->
+    <main class="console-shell">
       <nav class="console-nav" aria-label="页面导航">
-        <a href="/" class="nav-link">← 工作项录入</a>
-        <span class="nav-current">操作台</span>
+        <a href="/" class="nav-link">工作项录入</a>
+        <span class="nav-current">用户参与操作台</span>
       </nav>
 
-      <!-- ── 状态看板 ── -->
-      <section class="console-panel" aria-labelledby="status-title">
-        <div class="panel-header">
-          <p class="eyebrow">T13A Lite</p>
-          <h1 id="status-title">任务状态看板</h1>
-          <p class="lede">当前 T1-T16 执行状态、Owner、Review 方、阻塞项和下一步。</p>
+      <section class="console-hero" aria-labelledby="console-title">
+        <div>
+          <p class="eyebrow">T13F 功能骨架</p>
+          <h1 id="console-title">页面级协作闭环</h1>
+          <p class="lede">查看工作项、Agent 协作、阻塞确认、Review、门禁和复盘摘要。</p>
         </div>
-
-        <div id="status-loading" class="empty-state">
-          <p>正在加载状态数据...</p>
+        <div class="hero-flags" aria-label="当前执行口径">
+          <span class="flag flag-primary">页面主入口</span>
+          <span class="flag flag-warning">MiniMax 体验 Review 未完成</span>
+          <span class="flag">CLI 仅内部入口</span>
         </div>
-
-        <div id="status-error" class="empty-state hidden" style="border-color: var(--danger); color: var(--danger);">
-          <p id="status-error-text"></p>
-        </div>
-
-        <div class="table-wrap">
-          <table id="status-table" class="status-table hidden">
-            <thead>
-              <tr>
-                <th>任务</th>
-                <th>状态</th>
-                <th>Owner</th>
-                <th>Review</th>
-                <th>阻塞</th>
-                <th>下一步</th>
-              </tr>
-            </thead>
-            <tbody id="status-tbody"></tbody>
-          </table>
-        </div>
-
-        <p class="table-note">完整信息见 <a href="docs/execution/task-status-board.md" target="_blank">task-status-board.md</a>。</p>
       </section>
 
-      <!-- ── 启动包 ── -->
-      <section class="console-panel" aria-labelledby="packages-title">
-        <div class="panel-header">
-          <h2 id="packages-title">任务启动包</h2>
-          <p class="lede">当前已存在的启动包，点击查看详情。</p>
+      <section class="create-strip" aria-labelledby="create-title">
+        <div class="panel-header compact">
+          <h2 id="create-title">创建工作项</h2>
+          <p class="lede">提交后写入统一 T3 WorkItem Store。</p>
         </div>
-
-        <div id="packages-loading" class="empty-state">
-          <p>正在加载...</p>
-        </div>
-
-        <ul id="packages-list" class="package-list hidden"></ul>
-      </section>
-
-      <!-- ── 升级确认 ── -->
-      <section class="console-panel console-panel-wide" aria-labelledby="escalations-title">
-        <div class="panel-header">
-          <h2 id="escalations-title">阻塞与人工确认</h2>
-          <p class="lede">待用户确认的升级项，确认结果会写回结构化记录。</p>
-        </div>
-
-        <div id="escalations-loading" class="empty-state">
-          <p>正在加载待确认项...</p>
-        </div>
-
-        <div id="escalations-empty" class="empty-state hidden">
-          <p>当前没有待确认升级项。</p>
-        </div>
-
-        <div id="escalations-list" class="escalation-list hidden"></div>
-      </section>
-
-      <!-- ── 用户录入 ── -->
-      <section class="console-panel console-panel-wide" aria-labelledby="input-title">
-        <div class="panel-header">
-          <h2 id="input-title">补充信息 / 确认意见</h2>
-          <p class="lede">录入后将保存为可追踪的结构化记录，供后续 Agent 查阅。</p>
-        </div>
-
-        <form id="user-input-form" class="entry-form">
-          <div class="form-grid console-form-grid">
-            <div class="field">
-              <label for="input-context-type">类型</label>
-              <select id="input-context-type" name="context_type">
-                <option value="general">一般补充</option>
-                <option value="confirmation">确认意见</option>
-                <option value="clarification">需求澄清</option>
-                <option value="risk_ack">风险知情</option>
-              </select>
-            </div>
-
-            <div class="field">
-              <label for="input-related-task">关联任务</label>
-              <select id="input-related-task" name="related_task">
-                <option value="">（不关联特定任务）</option>
-              </select>
-            </div>
-          </div>
-
+        <form id="create-work-item-form" class="create-form">
           <div class="field">
-            <label for="input-content">内容</label>
-            <textarea
-              id="input-content"
-              name="content"
-              rows="5"
-              required
-              placeholder="例如：确认 T7 方案先行由 Codex 评估后即可进入开发，无需等待 T8。"
-            ></textarea>
+            <label for="create-request">请求内容</label>
+            <textarea id="create-request" name="raw_request" rows="4" required placeholder="例如：为操作台增加失败路径可见性"></textarea>
           </div>
-
-          <div class="form-actions">
-            <button type="submit">提交记录</button>
-            <p id="input-status" role="status" aria-live="polite"></p>
+          <div class="create-grid">
+            <div class="field">
+              <label for="create-type">类型</label>
+              <select id="create-type" name="type">
+                <option value="auto">自动识别</option>
+                <option value="feature">功能需求</option>
+                <option value="bug_fix">Bug 修复</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="create-title-input">标题</label>
+              <input id="create-title-input" name="title" type="text" placeholder="可选" />
+            </div>
+            <button type="submit" class="create-button">创建</button>
           </div>
+          <p id="create-status" class="inline-status" role="status" aria-live="polite"></p>
         </form>
+      </section>
 
-        <!-- ── 最近记录 ── -->
-        <details class="recent-records" id="recent-records">
-          <summary>最近录入记录</summary>
-          <ul id="records-list" class="records-list"></ul>
-        </details>
+      <div id="workspace-loading" class="empty-state">正在加载工作区...</div>
+      <div id="workspace-error" class="empty-state error hidden" role="alert"></div>
+
+      <section id="workspace-grid" class="workspace-grid hidden" aria-label="工作项协作视图">
+        <aside class="work-list-panel" aria-labelledby="work-list-title">
+          <div class="panel-header compact">
+            <h2 id="work-list-title">工作项</h2>
+            <p id="work-list-count" class="mini-copy"></p>
+          </div>
+          <div id="work-item-list" class="work-item-list"></div>
+        </aside>
+
+        <section class="detail-panel" aria-labelledby="detail-title">
+          <div id="selected-empty" class="empty-state hidden">还没有工作项。先创建一个工作项。</div>
+          <div id="selected-detail" class="detail-content hidden">
+            <div class="detail-heading">
+              <div>
+                <p id="detail-kicker" class="eyebrow"></p>
+                <h2 id="detail-title"></h2>
+              </div>
+              <span id="detail-status" class="status-badge"></span>
+            </div>
+
+            <dl id="detail-meta" class="meta-grid"></dl>
+
+            <section class="summary-band" aria-labelledby="key-conclusion-title">
+              <h3 id="key-conclusion-title">最近关键结论</h3>
+              <p id="key-conclusion"></p>
+            </section>
+
+            <section aria-labelledby="tasks-title">
+              <h3 id="tasks-title">任务拆解</h3>
+              <div id="task-list" class="compact-list"></div>
+            </section>
+
+            <section aria-labelledby="timeline-title">
+              <h3 id="timeline-title">统一时间线</h3>
+              <ol id="timeline-list" class="timeline-list"></ol>
+            </section>
+          </div>
+        </section>
+
+        <aside class="side-panel" aria-label="治理摘要">
+          <section class="side-section" aria-labelledby="confirmations-title">
+            <h2 id="confirmations-title">阻塞与确认</h2>
+            <div id="pending-list" class="stack-list"></div>
+          </section>
+
+          <section class="side-section" aria-labelledby="review-title">
+            <h2 id="review-title">Review</h2>
+            <div id="review-summary" class="summary-list"></div>
+          </section>
+
+          <section class="side-section" aria-labelledby="quality-title">
+            <h2 id="quality-title">质量门禁</h2>
+            <div id="quality-summary" class="summary-list"></div>
+          </section>
+
+          <section class="side-section" aria-labelledby="delivery-title">
+            <h2 id="delivery-title">交付检查</h2>
+            <div id="delivery-summary" class="summary-list"></div>
+          </section>
+
+          <section class="side-section" aria-labelledby="retro-title">
+            <h2 id="retro-title">复盘</h2>
+            <div id="retrospective-summary" class="summary-list"></div>
+          </section>
+
+          <section class="side-section" aria-labelledby="input-title">
+            <h2 id="input-title">补充信息</h2>
+            <form id="user-input-form" class="input-form">
+              <div class="field">
+                <label for="input-context-type">类型</label>
+                <select id="input-context-type" name="context_type">
+                  <option value="general">一般补充</option>
+                  <option value="confirmation">确认意见</option>
+                  <option value="clarification">需求澄清</option>
+                  <option value="risk_ack">风险知情</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="input-content">内容</label>
+                <textarea id="input-content" name="content" rows="4" required></textarea>
+              </div>
+              <button type="submit">提交记录</button>
+              <p id="input-status" class="inline-status" role="status" aria-live="polite"></p>
+            </form>
+          </section>
+        </aside>
+      </section>
+
+      <section class="governance-grid" aria-label="执行治理信息">
+        <section class="console-panel" aria-labelledby="status-title">
+          <div class="panel-header compact">
+            <h2 id="status-title">任务状态看板</h2>
+            <p class="lede">来自 task-status-board.md。</p>
+          </div>
+          <div id="status-loading" class="empty-state small">正在加载状态数据...</div>
+          <div class="table-wrap">
+            <table id="status-table" class="status-table hidden">
+              <thead>
+                <tr>
+                  <th>任务</th>
+                  <th>状态</th>
+                  <th>Owner</th>
+                  <th>阻塞</th>
+                  <th>下一步</th>
+                </tr>
+              </thead>
+              <tbody id="status-tbody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="console-panel" aria-labelledby="packages-title">
+          <div class="panel-header compact">
+            <h2 id="packages-title">任务启动包</h2>
+            <p class="lede">点击查看执行上下文。</p>
+          </div>
+          <div id="packages-loading" class="empty-state small">正在加载...</div>
+          <ul id="packages-list" class="package-list hidden"></ul>
+        </section>
       </section>
     </main>
     <script src="/console.js"></script>

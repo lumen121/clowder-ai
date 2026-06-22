@@ -12,6 +12,7 @@ const {
   listPendingEscalations,
   recordUserEscalationDecision,
 } = require("../escalations/escalation-flow");
+const { buildUserParticipationView } = require("./user-participation-view");
 
 const PUBLIC_DIR = path.join(__dirname, "..", "..", "public");
 const DOCS_DIR = path.join(__dirname, "..", "..", "docs", "execution");
@@ -72,6 +73,15 @@ async function handleRequest(request, response, context) {
   if (request.method === "GET" && url.pathname === "/api/console/start-packages") {
     const packages = listStartPackages();
     sendJson(response, 200, { packages });
+    return;
+  }
+
+  // GET /api/console/workspace — 返回 T13F 页面级用户参与视图投影
+  if (request.method === "GET" && url.pathname === "/api/console/workspace") {
+    const workspace = buildUserParticipationView(persistence, {
+      work_item_id: url.searchParams.get("work_item_id") || "",
+    });
+    sendJson(response, 200, workspace);
     return;
   }
 
@@ -205,6 +215,7 @@ function isClientError(error) {
     error.message === "Work item request is required." ||
     error.message.startsWith("Unknown work item type:") ||
     error.message === "用户输入内容不能为空。" ||
+    error.message.startsWith("WorkItem not found:") ||
     error.message.startsWith("decision_detail is required") ||
     error.message.endsWith("is required.") ||
     error.message.startsWith("Invalid user decision:") ||
@@ -342,7 +353,7 @@ function saveUserInput(body, persistence) {
   return persistence.createA2AEvent({
     from_agent: "user",
     to_agent: "system",
-    work_item_id: "t13a-lite-console",
+    work_item_id: body.work_item_id || "t13f-user-console",
     task_id: body.related_task || null,
     purpose: "execution_sync",
     context: JSON.stringify({
@@ -359,6 +370,7 @@ function saveUserInput(body, persistence) {
 }
 
 module.exports = {
+  buildUserParticipationView,
   formatForPage,
   getEscalation,
   handleRequest,
