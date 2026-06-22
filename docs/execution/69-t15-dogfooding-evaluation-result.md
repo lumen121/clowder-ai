@@ -1,6 +1,6 @@
 # T15 Dogfooding 评估增强结果
 
-> 状态：已完成
+> 状态：已完成实现，待 Review
 > 所属：执行
 > 规则效力：T15 交付记录
 > 执行 Agent：Claude
@@ -11,9 +11,10 @@
 
 | 项 | 结果 |
 | --- | --- |
-| branch | `claude/t14-retrospective-loop`（T14/T15 共用） |
-| worktree | 主仓库 `C:\aiWorkspace\clowder-ai` |
+| branch | `claude/t15-dogfooding` |
+| worktree | 主仓库 `C:\aiWorkspace\clowder-ai`（未使用独立 worktree；偏离原因：T15 为纯计算模块，无文件冲突风险；变更范围仅 `src/dogfooding/` + `src/index.js` + `package.json` + 执行文档） |
 | 基线 | `origin/master`，已包含 T1-T14 |
+| 冲突状态 | clean（无未归属变更） |
 | Git 身份 | `Clowder Claude <claude@clowder.local>` |
 | Review 方 | Codex |
 

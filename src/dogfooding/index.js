@@ -254,7 +254,10 @@ function evaluateMetrics(persistence, workItemId) {
     user_confirmation_count: allReviews.filter(
       (r) => r.result === "user_confirmation_required"
     ).length,
-    unresolved_count: allReviews.filter((r) => r.resolved !== true).length,
+    // T9 已确认口径：approved 不计入 unresolved（即使 resolved 未显式设为 true）
+    unresolved_count: allReviews.filter(
+      (r) => r.resolved !== true && r.result !== "approved"
+    ).length,
   };
 
   // ═══════════════════════════════════════════════════════════════════

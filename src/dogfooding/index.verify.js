@@ -384,13 +384,44 @@ console.log("\n=== Section 4: evaluateMetrics — Review 指标 ===");
   assertEqual(metrics.review.findings_count, 3, "4.7 发现总数 = 3");
   // 验证 object findings 被保留
   assertEqual(metrics.summary_counts.total_review_findings, 3, "4.8 summary_counts 中 review_findings = 3");
-  // ReviewRecord 默认 resolved: false，两个 Review 均未显式标记 resolved
-assertEqual(metrics.review.unresolved_count, 2, "4.9 未解决 Review = 2 (默认 resolved: false)");
+  // T9 已确认口径：approved 不计入 unresolved（即使 resolved 未显式设为 true）
+// rev1: changes_requested, default resolved=false → 计入 unresolved
+// rev2: approved, resolved=true → 不计入（approved 排除）
+assertEqual(metrics.review.unresolved_count, 1, "4.9 未解决 Review = 1 (approved 被 T9 口径排除)");
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
 // 5. evaluateMetrics — 质量门禁指标
 // ═══════════════════════════════════════════════════════════════════════════
+
+console.log("\n=== Section 4b: T9 unresolved 口径回归 ===");
+
+{
+  // 回归验证：approved + resolved=false 不应计入 unresolved（T9 已确认口径）
+  const dir = path.join(TMP_BASE, `s${++setupCounter}`);
+  fs.mkdirSync(dir, { recursive: true });
+  const p = createPersistence(dir);
+  const wi = p.createWorkItem({ goal: "T9 unresolved口径回归", type: "feature" });
+  p.createReviewRecord({
+    work_item_id: wi.id,
+    author_agent: "Claude",
+    reviewer_agent: "Codex",
+    scope: "approved 但未显式标记 resolved",
+    result: "approved",
+    findings: [],
+  });
+  p.createReviewRecord({
+    work_item_id: wi.id,
+    author_agent: "Claude",
+    reviewer_agent: "Codex",
+    scope: "changes_requested 未解决",
+    result: "changes_requested",
+    findings: ["需要修改"],
+  });
+  const m = evaluateMetrics(p, wi.id);
+  assertEqual(m.review.unresolved_count, 1, "4b.1 approved(resolved=false)不计入, changes_requested 计入 → unresolved=1");
+  assertEqual(m.review.approval_count, 1, "4b.2 approved 计数不受影响");
+}
 
 console.log("\n=== Section 5: evaluateMetrics — 质量门禁指标 ===");
 
