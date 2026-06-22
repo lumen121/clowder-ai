@@ -40,7 +40,7 @@
 | A4 | 系统架构师确认任务启动包执行落地方式。 | 系统架构师 | 已完成 | 无 | 架构落地确认已归档：[../architecture/17-task-start-package-execution-confirmation.md](../architecture/17-task-start-package-execution-confirmation.md)；模板轻量复核通过：[../collaboration/13-task-start-package-template.md](../collaboration/13-task-start-package-template.md) | 已关闭。后续 T5/T8 实现按架构确认落地。 |
 | A5 | T5/T8 前确认任务启动包、状态机、A2A、Review 和门禁关系不会冲突。 | 系统架构师 / 对应执行 Agent | 已完成 | 无 | 设计级预检查已归档：[../architecture/17-task-start-package-execution-confirmation.md#A5-关系检查结论](../architecture/17-task-start-package-execution-confirmation.md#A5-关系检查结论) | 已关闭。T5/T8 实现时仍需按确认文档执行具体护栏。 |
 | A6 | T5 启动前确认 WorkItem 持久化事实来源已统一。 | 系统架构师 / T2 / T3 执行 Agent | 已完成 | 无 | T2 侧：[21-t2-work-item-entry-result.md#任务启动包补充](21-t2-work-item-entry-result.md#任务启动包补充)；T3 侧：[22-t3-persistence-result.md#任务启动包补充](22-t3-persistence-result.md#任务启动包补充)；架构确认：[../architecture/17-task-start-package-execution-confirmation.md#A6-WorkItem-事实来源确认](../architecture/17-task-start-package-execution-confirmation.md#A6-WorkItem-事实来源确认)。CLI 和页面入口均调用 `createAndSaveWorkItem()` 并写入 T3 `work-items.json` Store。 | 已关闭。若后续重新引入第二个 WorkItem 来源，必须重新打开并阻断 T5。 |
-| A7 | MiniMax 在 T13 或 T16 前参与页面体验 Review。 | MiniMax / T13 或 T16 主执行 Agent | 待执行 | 无，尚未到 T13/T16 触发点 | 待补充 | T13 页面主界面或 T16 E2E 前安排 MiniMax Review；若 MiniMax 不可用，记录为执行降级或阻塞。 |
+| A7 | MiniMax 在 T13 或 T16 前参与页面体验 Review。 | MiniMax / T13 或 T16 主执行 Agent | 阻塞 | MiniMax 当前不可用，用户明确要求暂不分配 MiniMax | 当前通过 [66-t13-functional-fallback-start-package.md](66-t13-functional-fallback-start-package.md) 仅推进 T13 功能骨架，不关闭 A7 | MiniMax 恢复后补页面体验 Review；若 T16 前仍不可用，必须记录为降级或提交产品负责人确认。 |
 
 ## 已完成事项
 
